@@ -1,0 +1,496 @@
+\usepackage[]{textpos}
+\usepackage{multido}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{xparse}
+\usepackage{color}
+\usepackage{lipsum}  
+\usepackage{caption}
+\usepackage{lmodern}
+\usepackage{mathtools,amsfonts}
+\usepackage{enumitem}
+
+\usepackage{xcolor}
+\usepackage[spanish]{babel}
+\usepackage{lipsum}
+\usepackage{pgffor}
+
+\usepackage[tikz]{bclogo}
+\usepackage[most]{tcolorbox}
+\usepackage{varwidth}
+\usepackage{ifthen}
+\usepackage{xparse}
+\usepackage{pgfkeys}
+\usetikzlibrary{calc}
+\usepackage[explicit]{titlesec}
+\usepackage{titletoc}
+\usepackage{anyfontsize}
+\usepackage{wrapfig}
+\usepackage{minted}
+\usepackage[inkscapearea=page]{svg}
+\setsvg{inkscapeexe={"D:/software/programas/inkscape/bin/inkscape.exe"}}
+\usepackage{xfakebold}
+
+\RequirePackage{tcolorbox}
+\usetikzlibrary{patterns}
+
+\input{formato/apariencia/paleta.tex}
+\input{formato/apariencia/fuentes.tex}
+\input{formato/apariencia/galeria.tex}
+\input{formato/imgsPython.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DISENO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Comillas}[1]{``#1''}
+
+\newcommand{\Negrita}[1]{
+	 \ifthenelse{\equal{\MODO}{ModoE}}
+	{% 
+	\unskip\setBold[0.2]\aftergroup\unsetBold\aftergroup\ignorespaces  #1       
+	}{}
+	\ifthenelse{\equal{\MODO}{ModoC}}
+	{%            
+	 \textbf{#1}         
+	}{}	
+}
+
+\newcommand{\COLOR}{\color{white}}
+\newcommand{\MODO}{ModoD}
+\newcommand{\MATERIA}{ARQUITECTURA EMPRESARIAL}
+\newcommand{\Ciudad}{Bogotá}
+\newcommand{\Volumen}{\date}
+
+\newcommand{\Diario}[1]{	
+	\FuenteTSG\color{CTDiario}\textbf{#1}	 
+}
+
+\titlecontents{section}[2.4pc]
+{\addvspace{1pt}}
+{\contentslabel[\thecontentslabel]{2.4pc}}
+{}
+{\dotfill\small \thecontentspage}
+[]
+
+\titleformat{\section}{\centering\bf\FuenteTG\COLOR}{\FuenteTG\bf\FUENTE\Alph{section}.#1}{0.5em}{}
+%\newcommand{\titleformat{\subsection}{\centering\Large\selectfont\color{CTSeccion}}{\thesection}{0.5em}{}}
+\newcommand{\subseccionC}[1]{
+{\centering\FUENTE\Large\color{CTSeccion} \textbf{#1} \\ \vspace*{10pt} }
+}
+\newcommand{\subseccionI}[1]{
+{\LARGE\selectfont\color{CTSeccion} #1 \\ \vspace*{10pt} }
+}
+%-----------------------DIBUJAR LINEA-------------------------------
+
+\NewDocumentCommand{\DibujarLinea}{m m m m m}{
+  \setlength{\parindent}{0cm}
+  \setlength{\parskip}{0cm}
+  %\noindent
+  \count3=#1%
+  \advance\count3 by 1%
+   \multido{\i=0+1}{\count3}{       
+        \ifthenelse{\equal{#5}{horizontal}}{
+            %------horizontal
+		  \begin{textblock}{#2}(0,\i)
+			   \rule[0pt]{#3}{#4}
+		  \end{textblock}
+         }{
+            %------vertical
+            \begin{textblock}{#2}(\i,0)
+			   \rule[0pt]{#3}{#4}
+		    \end{textblock}
+         }
+	}
+}
+
+%------------------VARAIBLES GLOBALES-------------------------------
+
+\newdimen\CeldaW
+\newdimen\CeldaH
+\newcount\nFilas
+\newcount\nColus
+
+%-----------------------CALCULAR GRILLA-----------------------------
+
+\NewDocumentCommand{\CalcularGrilla}{m m O{\textwidth} O{\textheight} O{show}}
+{
+    %------variables------    
+	\nFilas=#1 %filas
+	\nColus=#2 %columnas	
+    
+    \CeldaW=#3 %ancho
+    \CeldaH=#4 %alto
+   %----------------------
+	%calculoar celda
+    \divide\CeldaH by \nFilas
+	\divide\CeldaW by \nColus
+	
+	\setlength{\TPHorizModule}{\CeldaW}
+	\setlength{\TPVertModule}{\CeldaH}
+	
+	\ifthenelse{\equal{#5}{show}}{
+        %dibujar filas
+		\DibujarLinea{\nFilas}{\nColus}{\textwidth}{.1pt}{horizontal}
+        %dibujar columnas
+        \DibujarLinea{\nColus}{\nFilas}{.1pt}{\textheight}{vertical}
+	}{}	
+}
+
+%-----------------------NUEVA PAGINA-------------------------------
+
+\NewDocumentEnvironment{NuevaPagina}{m m m}
+{
+ \thispagestyle{empty}
+ \clearpage
+ \CalcularGrilla{#1}{#2}[\textwidth][\textheight][#3]
+}
+%contenido
+{
+ \newpage
+ }
+
+ %-----------------------NUEVA PARRAFO-------------------------------
+ %-----vvariables--------
+ \newdimen\Margen
+ \setlength{\Margen}{2pt}
+ \newdimen\AltoP
+ %------------------------
+ \NewDocumentEnvironment{NuevoParrafo}{m m O{1} O{1}}%
+ {%
+ \setlength{\AltoP}{\dimexpr#4\TPVertModule-2\Margen\relax}%
+ \TPMargin{\Margen}%
+ \begin{textblock}{#3}(#2,#1)%
+ }%
+ {%  
+ \end{textblock}%
+ }%
+%-------------------------------------------------------------------------------------------------------------%
+%----------------------------------------CAJAS----------------------------------------------------------------%
+%-------------------------------------------------------------------------------------------------------------%
+
+\newcommand{\Imagen}[2]{   
+    \ifthenelse{\equal{\MODO}{ModoE}}
+    {%           
+      \includesvg[#1]{formato/apariencia/imagenes/#2Cartoon}
+    }{}
+    \ifthenelse{\equal{\MODO}{ModoC}}
+    {%            
+      \includesvg[#1]{formato/apariencia/imagenes/#2}
+    }{}   
+}
+
+\newcommand{\LineaIzqC}{0}
+\newcommand{\LineaIzqU}{1}
+
+\newcommand{\LineaDerC}{0}
+\newcommand{\LineaDerU}{1}
+\newcommand{\LineaDerD}{2}
+
+\newcommand{\LineaSupC}{0}
+\newcommand{\LineaSupU}{1}
+
+\newcommand{\LineaInfC}{0}
+\newcommand{\LineaInfU}{1}
+\newcommand{\LineaInfD}{2}
+
+\newcommand{\Vacio}{vacio}
+\newcommand{\ADer}{right}
+\newcommand{\AIzq}{left}
+\newcommand{\Trazo}{0.3pt}
+\newcommand{\Recta}{0.0pt}
+\newcommand{\EspacioADer}{35pt}
+
+\newcommand{\ConfigurarLineas}{
+\ifthenelse{\equal{\MODO}{ModoE}}
+           {\tikzset{decoration={random steps,segment length=5mm,amplitude=\Trazo}}}
+           {\tikzset{decoration={random steps,segment length=5mm,amplitude=\Recta}}}
+}
+\tcbset{
+	codigoMarco/.style n args={5}{
+        empty,   
+        height=\AltoP,        
+        frame code={\path[fill=#5](frame.south west) rectangle (frame.north east);};
+    	\ifthenelse{\equal{#1}{0}}{}{\draw[decorate,color=CLinea,line width =#1 pt](frame.north east) -- (frame.north west);};
+    	\ifthenelse{\equal{#2}{0}}{}{\draw[decorate,color=CLinea,line width =#2 pt](frame.south east) -- (frame.south west);};
+    	\ifthenelse{\equal{#3}{0}}{}{\draw[decorate,color=CLinea,line width =#3 pt](frame.north west) -- (frame.south west);};
+        \ifthenelse{\equal{#4}{0}}{}{\draw[decorate,color=CLinea,line width =#4 pt](frame.north east) -- (frame.south east);};       
+	}
+}
+\tcbset{
+	codigoLinea/.style n args={1}{
+		empty,   
+		height=\AltoP,        
+		frame code={\path[fill=white](frame.south west) rectangle (frame.north east);}; 
+		{\draw[decorate,color=#1,line width =10pt]([yshift=-12pt]frame.north east) -- ([yshift=-12pt]frame.north west);};
+	}   
+ }
+\newtcolorbox{Linea}[1]{%	
+	codigoLinea={#1}
+}
+
+\newtcolorbox{MarcoSinTitulo}[5]{%	
+    codigoMarco={#1}{#2}{#3}{#4}{#5}
+}
+
+\newtcolorbox{MarcoConTitulo}[8]{	
+    title=#6,
+    coltitle=CTituloDeParrafo,fonttitle=\normalsize,
+    attach boxed title to top #7={yshift=-\tcboxedtitleheight,},    
+    boxed title style={
+    size=minimal, top=5pt,left=2pt,right=\EspacioADer,
+    underlay={
+              \draw[decorate,CSubrayadoDeTitulo,line width=3pt,] ([xshift=3pt,yshift=-5pt]frame.south west)--([xshift=-\EspacioADer,yshift=-5pt]frame.south east);
+              \ifthenelse{\equal{#8}{\Vacio}}{}{\node[anchor=north east,outer sep=2pt] at ([yshift=2pt]frame.north east) {\includesvg[width=24pt]{#8}}};
+             };
+    },    
+    %-------------------------------
+    codigoMarco={#1}{#2}{#3}{#4}{#5}
+}
+
+\NewDocumentEnvironment{Marco}{O{1} O{1} O{1} O{1} O{CFondo} O{\Vacio} O{\Vacio} O{\Vacio}}%
+{%
+\ifthenelse{\equal{#8}{\Vacio}}
+    {\renewcommand{\EspacioADer}{3pt}}
+    {\renewcommand{\EspacioADer}{35pt}}%    
+\ifthenelse{\equal{#6}{\Vacio}}
+    {\begin{MarcoSinTitulo}{#1}{#2}{#3}{#4}{#5}}
+    {\begin{MarcoConTitulo}{#1}{#2}{#3}{#4}{#5}{#6}{#7}{#8}\vspace*{20pt}}
+}%
+{
+\ifthenelse{\equal{#6}{\Vacio}}
+    {\end{MarcoSinTitulo}}
+    {\end{MarcoConTitulo}}%
+}%
+
+
+%---------TITULO
+\newcommand{\CabeceraDeSeccion}[4][30]{
+\begin{NuevoParrafo}{0}{0}[#1][2]
+	\begin{Marco}[\LineaSupU][\LineaInfD][\LineaIzqU][\LineaDerD][#4]
+		\renewcommand{\COLOR}{\color{#3}}	
+		\section{#2}  
+	\end{Marco}
+\end{NuevoParrafo}
+}
+
+\newcommand{\COLORSS}{\color{white}}
+\titleformat{\subsection}{\centering\bf\LARGE\COLORSS}{\filcenter\LARGE\bf\FUENTE\Alph{subsection}.#1}{0.0em}{}
+\titlecontents{subsection}[2.4pc]
+{\addvspace{1pt}}
+{---}
+{}
+{\dotfill\small \thecontentspage}
+[]
+
+\newcommand{\CabeceraDeSubSeccion}[4]{
+	\begin{NuevoParrafo}{#1}{0}[8][1]
+		\begin{Marco}[\LineaSupC][\LineaInfC][\LineaIzqC][\LineaDerC][CBlanco]
+		    \begin{center}
+		    	\vspace{-5pt}
+		    	\renewcommand{\COLORSS}{\color{#3}}
+		    	\subsection{#2}		    	
+		    	%\color{#3}\LARGE#2
+		    \end{center}		
+		\end{Marco}
+	\end{NuevoParrafo}
+	\begin{NuevoParrafo}{#1}{7}[23][1]	
+		\begin{Linea}{#4}
+		\end{Linea}
+	\end{NuevoParrafo}
+}
+
+\newcommand{\CabeceraDeSubSeccionConAncho}[5]{
+	\begin{NuevoParrafo}{#1}{0}[8][1]
+		\begin{Marco}[\LineaSupC][\LineaInfC][\LineaIzqC][\LineaDerC][CBlanco]
+			\begin{center}
+				\vspace{-5pt}
+				\renewcommand{\COLORSS}{\color{#3}}
+				\subsection{#2}		    	
+				%\color{#3}\LARGE#2
+			\end{center}		
+		\end{Marco}
+	\end{NuevoParrafo}
+	\begin{NuevoParrafo}{#1}{7}[#5][1]	
+		\begin{Linea}{#4}
+		\end{Linea}
+	\end{NuevoParrafo}
+}
+
+\newcommand{\CabeceraDeSubSeccionConAnchoN}[7]{
+	\begin{NuevoParrafo}{#1}{#2}[16][2]
+		\begin{Marco}[\LineaSupC][\LineaInfC][\LineaIzqC][\LineaDerC][CBlanco]
+			\begin{center}
+				\vspace{-5pt}
+				\renewcommand{\COLORSS}{\color{#6}}
+				\subsection{\textbf{#5}}		    	
+				%\color{#3}\LARGE#2
+			\end{center}		
+		\end{Marco}
+	\end{NuevoParrafo}
+	\begin{NuevoParrafo}{#1}{\the\numexpr #2 + #3 \relax}[#4][1]	
+		\begin{Linea}{#7}
+		\end{Linea}
+	\end{NuevoParrafo}
+}
+
+\newcommand{\SeparadorDeSubSeccion}[2]{	
+	\begin{NuevoParrafo}{#1}{0}[30][1]	
+		\begin{Linea}{#2}
+		\end{Linea}
+	\end{NuevoParrafo}
+}
+
+\newcommand{\CabeceraDePoster}[1]{
+	\begin{NuevoParrafo}{0}{0}[8][6]
+		\begin{Marco}[\LineaSupC][\LineaInfC][\LineaIzqC][\LineaDerC][CCDiario]
+		\Imagen{width=65pt}{\Escudo}
+		\end{Marco}
+	\end{NuevoParrafo}	
+	\begin{NuevoParrafo}{0}{8}[68][6]
+		\begin{Marco}[\LineaSupC][\LineaInfC][\LineaIzqC][\LineaDerC][CCDiario]		  
+		    \vspace{15pt}
+		    \centering\FuenteTSG\color{CTDiario}\textbf{#1}							  
+		\end{Marco}
+	\end{NuevoParrafo}
+}
+\newcommand{\CiudadFechaVolumen}{
+	\begin{NuevoParrafo}{6}{0}[94][2]
+		\begin{Marco}[\LineaSupU][\LineaInfU][\LineaIzqC][\LineaDerC][CBlanco]
+		\centering\Negrita{ --- \Ciudad\ \today\ \Volumen \ ---}
+		\end{Marco}
+	\end{NuevoParrafo}
+}
+
+\newcommand{\Pelicula}[3]{	
+	\begin{minipage}[t]{9.2cm}
+		\color{CTCine}{\Negrita{\large#1}}\begin{center}\includegraphics[width=5cm,height=6cm]{#2}\end{center}#3
+	\end{minipage}
+}
+
+\newcommand{\Escritor}[3]{	
+	\begin{minipage}[t]{18cm}
+		\color{CTCine}{\Negrita{\large#1}}\\
+		\begin{wrapfigure}{l}{0.3\textwidth}			
+			\centering\includegraphics[width=4cm]{#2}			
+		\end{wrapfigure}#3		
+	\end{minipage}
+}
+
+\newcommand{\Personaje}[5]{	
+	\begin{minipage}[t]{#1}
+		\color{#2}{\Negrita{\large#3}}\\
+		\begin{wrapfigure}{l}{4.5cm}			
+			\centering\includegraphics[width=4cm]{#4}			
+		\end{wrapfigure}#5		
+	\end{minipage}
+}
+
+\newcommand{\SuperX}[3]{	
+	\begin{minipage}[t]{29cm}
+		\color{CTCine}{\Negrita{\large#1}}\\
+		\begin{wrapfigure}{l}{0.2\textwidth}
+			\vspace*{-20pt}			
+			\centering\includegraphics[width=4cm]{#2}			
+		\end{wrapfigure}#3		
+	\end{minipage}
+}
+
+\newcommand*{\Obra}[1]{%
+	\raisebox{-.3\baselineskip}{%
+		\includegraphics[
+		height=\baselineskip,
+		width=\baselineskip,
+		keepaspectratio,
+		]{#1}%
+	}%
+}
+
+\newcommand{\Libro}[2]{
+		\begin{minipage}[t]{4.5cm}			
+			\centering
+			\includegraphics[width=3cm,height=4cm]{#1}\\{\small#2}
+		\end{minipage}
+	    \vspace{+\parskip}	
+}%
+\NewDocumentEnvironment{Libros}{m}%
+{
+\begin{minipage}[t]{11cm}
+	\color{CTCine}{\Negrita{\large#1}}\newline\newline	
+	\centering\hfill
+}%
+{
+\end{minipage}
+}%
+
+%------------------------CONFIURACION DEL MODO-----------------------------------
+%\input{formato/progsPython}
+\newcommand{\Configuracion}[1]{
+    \renewcommand{\MODO}{#1}%para elgir galeria
+    \ConfigurarFuentes
+    \FUENTE
+    \ConfigurarLineas
+    \ConfigurarPaleta    
+    \ConfigurarImagenes    
+}
+
+\newcommand{\ciclolipsum}[1]{
+\foreach \x in {1,...,#1}
+{
+	\lipsum[1][5]
+}
+\par
+}
+\newcommand{\cortelipsum}{
+\vfill\null	
+\columnbreak 
+}
+\newcommand{\nuevalinea}{\leavevmode\\}
+
+\def\ImagenCircular[#1]#2#3{
+	\begin{tikzpicture}
+		\clip (0,0) circle (#1);
+		\node (0,0) {\includegraphics[width=#2]{#3}};
+	\end{tikzpicture}%
+}
+
+\newcommand{\autores}[3]{ 
+\vspace{-5pt}
+\large \centering{UNIVERSIDAD DISTRITAL FJC}
+\vspace{5pt}
+\hrule
+\vspace{5pt}
+ #1\\#2 \\#3
+}
+
+\newenvironment{MisionVision}[1][Mision]{ 
+	\begin{minipage}[t][.20\textheight]{\textwidth}
+		\begin{center}
+			\color{gray}\bfseries{\fontsize{20}{10}\selectfont #1}
+			\vspace{-10pt}
+			%\subsubsection{#1}
+		\end{center}	
+	}
+{
+	\end{minipage}\\[1cm]
+}
+\newenvironment{Vision}[1][Vision]{ 
+	\begin{minipage}[t][.20\textheight]{\textwidth}
+		\begin{center}
+			%\color{gray}\bfseries{\fontsize{25}{10}\selectfont #1}
+			\section{#1}
+		\end{center}	
+	}
+	{
+	\end{minipage}\\[2cm]
+}
+\newenvironment{Objetivos}[1][Objetivos]{ 
+	\begin{minipage}[t][.20\textheight]{\textwidth}
+		\begin{center}
+			\color{gray}\bfseries{\fontsize{20}{10}\selectfont #1}
+			\vspace{-18pt}
+			%\color{gray}\bfseries{\fontsize{25}{10}\selectfont #1}
+			%\section{#1}
+		\end{center}	
+	}
+	{
+	\end{minipage}\\[1cm]
+}

@@ -1,0 +1,33 @@
+\colorlet{CLinea}{gray!70!white}
+\colorlet{CFondo}{gray!5!white}
+\colorlet{CBlanco}{white}
+\colorlet{CNegro}{black}
+
+\colorlet{CFNombre}{red!80!white}
+\colorlet{CBNombre}{red!10!white}
+
+\colorlet{CTituloDeParrafo}{blue!40}
+\colorlet{CSubrayadoDeTitulo}{blue!40}
+
+\newcommand{\ConfigurarPaleta}{
+%------------COMUNIDAD-----------------
+\ifthenelse{\equal{\MODO}{ModoC}}
+    {
+    \colorlet{CFNombre}{green!80!white}
+    \colorlet{CBNombre}{green!10!white}
+    \colorlet{CTSeccion}{blue!40}
+    \colorlet{CCSeccion}{gray!20}
+    \definecolor{CTDiario}{RGB}{133, 146, 158}
+    \definecolor{CCDiario}{RGB}{253, 254, 254}
+    }{}
+%-------------ESTUDIANTES-------------
+\ifthenelse{\equal{\MODO}{ModoE}}
+    {
+    \colorlet{CFNombre}{yellow!80!white}
+    \colorlet{CBNombre}{yellow!10!white}    
+    \colorlet{CTSeccion}{blue!30}
+    \definecolor{CCSeccion}{RGB}{255, 220, 110}   
+    \definecolor{CTDiario}{RGB}{133, 193, 233}
+    \definecolor{CCDiario}{RGB}{253, 242, 233}
+    }{}
+}

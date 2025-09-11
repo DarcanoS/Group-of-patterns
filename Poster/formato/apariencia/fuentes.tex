@@ -1,0 +1,26 @@
+
+\usepackage{fontspec}
+\usepackage[outline]{contour}
+%------------------------CONFIGURARA FUENTES---------------------------
+\newcommand{\FuenteTSG}{\fontsize{50}{50}}
+\newcommand{\FuenteTG}{\fontsize{40}{40}}  
+\newcommand{\FuenteTM}{\large}
+\newcommand{\FuenteTP}{\normalsize} 
+
+\newcommand{\FuenteComic}{ka Blam}
+\newcommand{\FuenteEstudiante}{Just a Moment}
+\newcommand{\FuenteDocente}{calibri}
+
+\newcommand{\FUENTE}{\setmainfont{\FuenteEstudiante}}
+
+\newcommand{\ConfigurarFuentes}{
+  \ifthenelse{\equal{\MODO}{ModoE}}
+             {%              
+              \renewcommand{\FUENTE}{\setmainfont{\FuenteEstudiante}}           
+             }{}
+    \ifthenelse{\equal{\MODO}{ModoC}}
+             {%            
+              \renewcommand{\FUENTE}{\sffamily}            
+             }{}    
+}
+

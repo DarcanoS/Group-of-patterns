@@ -1,0 +1,75 @@
+# Archivos auxiliares de LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.pytxcode
+
+# Archivos de salida de LaTeX
+*.pdf
+*.dvi
+*.ps
+
+# Archivos de caché y temporales
+*.synctex.gz
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.lof
+*.lot
+*.figlist
+*.makefile
+*.fignums
+*.figlist
+*.makefile
+*.lol
+
+# Archivos de Biber/BibTeX
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+
+# Archivos de minted (código resaltado)
+_minted-*/
+*.pyg
+
+# Archivos específicos de editores
+.vscode/
+*.swp
+*.swo
+*~
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Archivos de respaldo
+*.bak
+*.backup
+
+# Logs y archivos de depuración
+*.log
+*.aux
+*.out
+*.toc
+*.lof
+*.lot
+
+# Archivos de Inkscape SVG
+*.svg.bak
+*.svg~
+
+# Archivos temporales de compilación
+*.figlist
+*.makefile
+*.fignums
+*.fls
+*.fdb_latexmk
