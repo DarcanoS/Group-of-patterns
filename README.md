@@ -12,6 +12,7 @@ Group_of_patterns/
 │   ├── ...
 │   └── README.md          # Documentación técnica detallada
 ├── .gitignore             # Configuración de Git para LaTeX
+├── Modelos/               # Editables de los modelos en Archi
 └── README.md              # Este archivo
 ```
 
