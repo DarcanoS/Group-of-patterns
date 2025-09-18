@@ -11,6 +11,7 @@
 
 # Archivos de salida de LaTeX
 *.pdf
+!imgs/**/*.pdf
 *.dvi
 *.ps
 
