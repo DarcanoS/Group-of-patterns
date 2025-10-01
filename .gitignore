@@ -10,8 +10,8 @@
 *.pytxcode
 
 # Archivos de salida de LaTeX
-*.pdf
-!imgs/**/*.pdf
+poster.pdf
+poster_1.pdf
 *.dvi
 *.ps
 
@@ -74,3 +74,7 @@ Thumbs.db
 *.fignums
 *.fls
 *.fdb_latexmk
+
+#Archivos antiguos
+Poster/imgs/modelo
+Poster/imgs/caso
