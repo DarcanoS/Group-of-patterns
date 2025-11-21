@@ -11,8 +11,15 @@ Group_of_patterns/
 │   ├── poster.tex         # Documento principal
 │   ├── ...
 │   └── README.md          # Documentación técnica detallada
-├── .gitignore             # Configuración de Git para LaTeX
+├── Proyecto/              # Proyecto de desarrollo Air Quality Platform
+│   ├── backend/           # API REST con FastAPI
+│   ├── frontend/          # Aplicación web con Vue 3
+│   ├── database/          # PostgreSQL + PostGIS
+│   ├── ingestion/         # Servicio de ingesta de datos
+│   ├── docs/              # Documentación del proyecto
+│   └── README.md          # Información del proyecto
 ├── Modelos/               # Editables de los modelos en Archi
+├── .gitignore             # Configuración de Git para LaTeX
 └── README.md              # Este archivo
 ```
 
@@ -28,6 +35,18 @@ Un póster técnico desarrollado en LaTeX que presenta:
 - **Tecnología**: XeLaTeX + Biber + minted
 - **Contenido**: Patrones arquitecturales con diagramas ArchiMate
 - **Organización**: Estructura modular por puntos de vista
+
+### 💻 Proyecto de Desarrollo
+
+**Ubicación**: [`/Proyecto`](./Proyecto)
+
+Plataforma web para consulta y análisis de datos de calidad del aire:
+
+- **Frontend**: Vue 3 + TypeScript
+- **Backend**: Python + FastAPI
+- **Base de datos**: PostgreSQL + PostGIS
+- **Patrones**: Implementación de al menos 5 patrones de diseño
+- **Documentación**: Guías completas de desarrollo y metodología Git Flow
 
 
 ## 📄 Licencia
