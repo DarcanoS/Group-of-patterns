@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Air Quality Platform Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#00897B",
+              "background-light": "#F0F2F5",
+              "background-dark": "#0B1020",
+              "card-light": "#FFFFFF",
+              "card-dark": "#121826",
+              "text-primary-light": "#1A202C",
+              "text-primary-dark": "#F5F7FA",
+              "text-secondary-light": "#718096",
+              "text-secondary-dark": "#B0BEC5",
+              "input-bg-light": "#FFFFFF",
+              "input-bg-dark": "#273043",
+              "input-border-light": "#E2E8F0",
+              "input-border-dark": "#374151",
+              danger: "#E53935",
+            },
+            fontFamily: {
+              display: ["Sora", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+      body {
+        font-family: 'Sora', sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-primary-light dark:text-text-primary-dark">
+<div class="flex min-h-screen items-center justify-center p-4">
+<div class="w-full max-w-5xl rounded-lg shadow-2xl bg-card-light dark:bg-card-dark overflow-hidden">
+<div class="grid lg:grid-cols-2">
+<div class="relative hidden lg:block">
+<img alt="A cityscape at dusk, representing urban air quality monitoring." class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPsSFsqD4Y2H1-gZgohPTLcrss82P4xPGs-DGp2k0017wYmP7Pieynv60JnNptMUH0aCPfB54rj_t5WY4qNyUnkwOILOzjnHV8ot6awvYfSzHzrDRRbaIub1e1Pg0f5i6u63elmMznUkW4JFX1Awqcy72lbJVQXvJys4bbbGlimotBIsIsEDxFsvXAW-pQcI_mA3zeFuHJd1yn_oih1NPBVjpSoej7HI7JXvKR9hVIhPFmulqF_E6BovLPgnpCmhp5XZzuFOd96y8"/>
+<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center p-12">
+<h1 class="text-5xl font-bold text-white leading-tight">Monitor, understand and act on air quality in your city</h1>
+</div>
+</div>
+<div class="p-8 md:p-12">
+<div class="flex items-center gap-4 mb-6">
+<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
+<svg class="text-primary" fill="none" height="32" viewBox="0 0 32 32" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M9.19995 14.8C10.7925 13.5688 13.0658 12.8 16 12.8C18.9342 12.8 21.2075 13.5688 22.8 14.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M10.8 18C12.1385 17.025 13.9841 16.4 16 16.4C18.0159 16.4 19.8615 17.025 21.2 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M12 21.2H20V24H12V21.2Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-2xl font-bold">Air Quality Platform</h2>
+</div>
+<p class="mb-8 text-text-secondary-light dark:text-text-secondary-dark">Welcome back! Please enter your details.</p>
+<form action="#" class="space-y-6" method="POST">
+<div>
+<label class="block text-sm font-medium mb-2 text-text-primary-light dark:text-text-primary-dark" for="email">Email</label>
+<input class="block w-full rounded-md border-0 py-3 px-4 bg-input-bg-light dark:bg-input-bg-dark ring-1 ring-inset ring-input-border-light dark:ring-input-border-dark placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark focus:ring-2 focus:ring-inset focus:ring-primary" id="email" name="email" placeholder="you@example.com" required="" type="email"/>
+</div>
+<div>
+<div class="flex items-center justify-between">
+<label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark" for="password">Password</label>
+<a class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary" href="#">Forgot your password?</a>
+</div>
+<div class="mt-2">
+<input class="block w-full rounded-md border-0 py-3 px-4 bg-input-bg-light dark:bg-input-bg-dark ring-1 ring-inset ring-input-border-light dark:ring-input-border-dark placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark focus:ring-2 focus:ring-inset focus:ring-primary" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<div>
+<button class="flex w-full justify-center rounded-md bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-opacity" type="submit">Sign in</button>
+</div>
+</form>
+<p class="mt-8 text-center text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                        Don’t have an account yet?
+                        <a class="font-semibold leading-6 text-primary hover:opacity-90" href="#">Contact your administrator</a>
+</p>
+<p class="mt-6 text-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
+                        Hint: Your role determines access to specific features.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

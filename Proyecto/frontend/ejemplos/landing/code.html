@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Air Quality Platform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#00897B",
+              "background-light": "#F5F7FA",
+              "background-dark": "#0B1020",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#121826",
+              "text-primary-light": "#121826",
+              "text-primary-dark": "#F5F7FA",
+              "text-secondary-light": "#4B5563",
+              "text-secondary-dark": "#9CA3AF",
+              "border-light": "#E5E7EB",
+              "border-dark": "#374151",
+              "secondary-green": "#43A047",
+            },
+            fontFamily: {
+              display: ["Roboto", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+      .glow-shadow {
+        box-shadow: 0 0 15px rgba(0, 137, 123, 0.3);
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-primary-light dark:text-primary-dark">
+<div class="min-h-screen">
+<header class="py-4 px-4 sm:px-6 lg:px-8 border-b border-border-light dark:border-border-dark">
+<nav class="container mx-auto flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-primary rounded-full p-2 glow-shadow">
+<img alt="Air Quality Platform logo" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1qLoIsB9JnZRcd9Osej18whrGgHhvwuDaEgMsa-WRoKXhom7gvTsKoWwUp9vYSijopX4P7bM0QZE09wJXZwuKSrmMRnTrnZWsTUesuKRQCGTtYoK7RX2mOzAl-i6j-BgHzmG5iwbsW9m7P7q86YJXxAA55G4x5hG6RsoWMJjD2duvc5NAbftRPOid8oPnL5Gh4-bFKolUvCDtPL7RDpv4G2cfIP4qx7hvvsnPInLKdblWFBXQJT_eTo6U05XqHm4j3F0ZUyf10CM"/>
+</div>
+<span class="text-xl font-bold text-text-primary-light dark:text-text-primary-dark">Air Quality Platform</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-white transition-colors" href="#">Features</a>
+<a class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-white transition-colors" href="#">Use Cases</a>
+<a class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-white transition-colors" href="#">Pricing</a>
+<a class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-white transition-colors" href="#">Docs</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-sm font-medium text-text-primary-light dark:text-text-primary-dark hover:text-primary dark:hover:text-white transition-colors">Sign In</button>
+<button class="bg-primary text-white text-sm font-medium px-4 py-2 rounded hover:bg-opacity-90 transition-colors">Sign Up</button>
+</div>
+</nav>
+</header>
+<main>
+<section class="py-20 px-4 sm:px-6 lg:px-8">
+<div class="container mx-auto grid lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-6 text-center lg:text-left">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-text-primary-light dark:text-text-primary-dark">Monitor and Understand Urban Air Quality</h1>
+<p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-xl mx-auto lg:mx-0">
+                            Our platform provides real-time, hyperlocal air quality data and powerful analytics tools for cities, researchers, and citizens.
+                        </p>
+<div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-4">
+<button class="bg-primary text-white px-6 py-3 rounded font-medium hover:bg-opacity-90 transition-colors">Request a Demo</button>
+<button class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark px-6 py-3 rounded font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">View Documentation</button>
+</div>
+</div>
+<div class="flex justify-center">
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-lg glow-shadow w-full max-w-md">
+<h3 class="text-lg font-medium text-text-primary-light dark:text-text-primary-dark">Today in Bogotá</h3>
+<div class="mt-4 flex items-center justify-between">
+<div>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">AQI</p>
+<p class="text-4xl font-bold text-secondary-green">58</p>
+<p class="text-sm font-medium text-secondary-green">Moderate</p>
+</div>
+<div class="text-right space-y-1">
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">PM2.5: <span class="font-medium text-text-primary-light dark:text-text-primary-dark">15.2 µg/m³</span></p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">O₃: <span class="font-medium text-text-primary-light dark:text-text-primary-dark">45.7 µg/m³</span></p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">NO₂: <span class="font-medium text-text-primary-light dark:text-text-primary-dark">22.1 µg/m³</span></p>
+</div>
+</div>
+<div class="mt-6">
+<img alt="A simple line chart showing air quality trends" class="w-full rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwWGYQ_RMSjGTvl47togyP_TporG90-Q04hO2Lz4fMZnhv2GI5GtTsmwPbQP0fGccpccVoqkmEHY_qBGPPajfC7CBp1UH1nDbV4Gyu_Wcw1L9paWc3auPeGB-I4C4rnQvt2tK_xAB57wUyiS_p-d-1_Sr2h1koli0uzdBrzfc_3qNoS2g6cbhA-9UX04WhDexImt0cUO1YOLYw1OwmEb1WPoHjJvh0HrFJBWojIaHnCavAVgpC4tbnHO7SZIpWeYMOQZhIcnTE3k0"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-black/20">
+<div class="container mx-auto text-center">
+<h2 class="text-3xl font-bold text-text-primary-light dark:text-text-primary-dark">Built for different roles</h2>
+<p class="mt-4 text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
+                        Whether you're a concerned citizen, a dedicated researcher, or a city official, our platform is tailored to your needs.
+                    </p>
+<div class="mt-12 grid md:grid-cols-3 gap-8 text-left">
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-md">
+<h3 class="text-xl font-bold text-primary">Citizen</h3>
+<p class="mt-2 text-text-secondary-light dark:text-text-secondary-dark">Access easy-to-understand air quality information for your neighborhood.</p>
+<ul class="mt-4 space-y-2 text-sm">
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Real-time local AQI</li>
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Health recommendations</li>
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Historical data trends</li>
+</ul>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-md">
+<h3 class="text-xl font-bold text-primary">Researcher</h3>
+<p class="mt-2 text-text-secondary-light dark:text-text-secondary-dark">Utilize our powerful API and data tools for your environmental studies.</p>
+<ul class="mt-4 space-y-2 text-sm">
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Bulk data export</li>
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Advanced analytics suite</li>
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>API access for integration</li>
+</ul>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-md">
+<h3 class="text-xl font-bold text-primary">Admin / Official</h3>
+<p class="mt-2 text-text-secondary-light dark:text-text-secondary-dark">Monitor city-wide air quality and make informed policy decisions.</p>
+<ul class="mt-4 space-y-2 text-sm">
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>City overview dashboard</li>
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Pollution source identification</li>
+<li class="flex items-start gap-2"><span class="material-icons-outlined text-primary text-base">check_circle</span>Custom alert system</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 px-4 sm:px-6 lg:px-8">
+<div class="container mx-auto text-center">
+<h2 class="text-3xl font-bold text-text-primary-light dark:text-text-primary-dark">How it works</h2>
+<p class="mt-4 text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
+                      Our system processes data through a simple yet powerful three-step pipeline to deliver accurate insights.
+                  </p>
+<div class="mt-12 grid md:grid-cols-3 gap-8 md:gap-12">
+<div class="flex flex-col items-center">
+<div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full h-20 w-20 flex items-center justify-center">
+<span class="material-icons-outlined text-primary text-4xl">cloud_download</span>
+</div>
+<h3 class="mt-4 text-xl font-bold">1. Ingest</h3>
+<p class="mt-2 text-text-secondary-light dark:text-text-secondary-dark">We collect raw data from a vast network of government, satellite, and community sensors.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full h-20 w-20 flex items-center justify-center">
+<span class="material-icons-outlined text-primary text-4xl">sync_alt</span>
+</div>
+<h3 class="mt-4 text-xl font-bold">2. Transform</h3>
+<p class="mt-2 text-text-secondary-light dark:text-text-secondary-dark">Our proprietary algorithms clean, calibrate, and model the data for hyper-local accuracy.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full h-20 w-20 flex items-center justify-center">
+<span class="material-icons-outlined text-primary text-4xl">insights</span>
+</div>
+<h3 class="mt-4 text-xl font-bold">3. Deliver</h3>
+<p class="mt-2 text-text-secondary-light dark:text-text-secondary-dark">Actionable insights are delivered through our intuitive dashboard, reports, and API.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-black/20">
+<div class="container mx-auto flex justify-center">
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-lg w-full max-w-4xl">
+<h2 class="text-2xl font-bold text-center text-text-primary-light dark:text-text-primary-dark">Sample Data Insights</h2>
+<div class="mt-6">
+<h3 class="font-medium text-text-primary-light dark:text-text-primary-dark">Daily AQI Trend Example</h3>
+<img alt="A line chart showing an example of daily AQI trends" class="w-full mt-4 rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN62swqSFRvkj4b7QyCDDMg7lGsS6xxqeMxbdPB_WE14V6wF84npwOOJ2IqvOk0uF9aVfLY4EBV_nOlkZbftyp6c0az7I3uucT8syaVTMNsMpyCbt_FuaVY2Lzpb_n5rAvLZXDNxlIKOy0HBDR1ePxPDWn4_9EQ228w8K78_-kbhB40Siqa6_BL4mRJMvOGyDMUGQj39j5t-QW6pRlqyW_GWM4bCbRww_AtKP9BH_49yf0sWNtJG2dyM5Ny7dmt47rVtgntDFOn8I"/>
+<div class="mt-4 flex justify-center gap-6 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+<div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-green-500"></span>Good</div>
+<div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-yellow-500"></span>Moderate</div>
+<div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-orange-500"></span>Unhealthy for Sensitive</div>
+<div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-red-500"></span>Unhealthy</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="py-8 px-4 sm:px-6 lg:px-8 border-t border-border-light dark:border-border-dark">
+<div class="container mx-auto text-center text-text-secondary-light dark:text-text-secondary-dark">
+<p class="text-lg font-bold text-text-primary-light dark:text-text-primary-dark">Air Quality Platform</p>
+<p class="text-sm">Real-time environmental intelligence.</p>
+<div class="mt-4 flex justify-center gap-4 text-sm">
+<a class="hover:text-primary dark:hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary dark:hover:text-white transition-colors" href="#">Terms of Service</a>
+</div>
+<p class="mt-6 text-xs text-gray-500 dark:text-gray-400">
+                    Disclaimer: This is a demo product. All data shown is for illustrative purposes only.
+                </p>
+</div>
+</footer>
+</div>
+
+</body></html>
