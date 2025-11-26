@@ -43,13 +43,14 @@ services:
       - ./postgresql/init_schema.sql:/docker-entrypoint-initdb.d/01-init_schema.sql:ro
       - ./postgresql/setup_users_permissions.sql:/docker-entrypoint-initdb.d/02-setup_permissions.sql:ro
       - ./postgresql/seed_data.sql:/docker-entrypoint-initdb.d/03-seed_data.sql:ro
-    
+          POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-admin_secure_password}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d air_quality_db"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+          POSTGRES_USER: ${DB_ADMIN_USER:-air_quality_admin}
     
     networks:
       - air-quality-network
