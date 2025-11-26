@@ -1,6 +1,13 @@
 # Air Quality Platform - Database Setup
 
-This folder contains the SQL scripts to create and initialize the PostgreSQL database with PostGIS extension for the Air Quality Platform project.
+This folder contains database schema, setup scripts and configuration for the Air Quality Platform.
+
+## Architecture
+
+The platform uses a **hybrid database architecture**:
+
+- **PostgreSQL + PostGIS**: Relational database for core operational data
+- **MongoDB**: NoSQL database for user preferences and dashboard configurations
 
 ## Prerequisites
 
@@ -11,13 +18,23 @@ This folder contains the SQL scripts to create and initialize the PostgreSQL dat
 
 ## Files
 
+### PostgreSQL (Relational)
 - `init_schema.sql` - Creates all database tables, indexes, and constraints
 - `setup_users_permissions.sql` - Grants appropriate permissions to application user
-- `seed_data.sql` - Inserts initial reference data for development and testing (coming next)
-- `.env.example` - Template for environment variables (copy to `.env` and update)
+- `db_helper.sh` - Helper script for common database operations
+
+### MongoDB (NoSQL)
+- `mongo_init.js` - Creates MongoDB collections with validation schemas
+- `mongo_indexes.js` - Creates performance indexes for MongoDB
+- `mongo_docker_compose.yml` - Docker Compose configuration for MongoDB
+- `MONGODB_SETUP.md` - Complete MongoDB setup and usage guide
+
+### Configuration
+- `.env.example` - Template for environment variables (PostgreSQL + MongoDB)
 - `.env` - **YOUR credentials** (NEVER commit this file, already in .gitignore)
-- `.copilot_temp/` - Temporary documentation generated during setup (not committed to Git)
-- `db_helper.sh` - Bash script to easily connect/run scripts using .env credentials
+- `COPILOT_DATABASE.md` - Instructions for GitHub Copilot (v2)
+- `COPILOT_DATABASE_V2.md` - Version 2 update instructions
+- `.copilot_temp/` - Temporary documentation (not committed to Git)
 
 ## Quick Start
 
