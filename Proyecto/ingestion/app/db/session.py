@@ -5,7 +5,7 @@ Creates SQLAlchemy engine and session factory.
 
 from typing import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
 
@@ -62,7 +62,7 @@ def test_connection() -> bool:
     try:
         db = next(get_db())
         # Simple query to test connection
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         logger.info("✓ Database connection successful")
         return True
     except Exception as e:
