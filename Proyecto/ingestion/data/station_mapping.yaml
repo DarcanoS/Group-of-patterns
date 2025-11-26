@@ -1,0 +1,98 @@
+# Station mapping configuration
+# Maps CSV files to GeoJSON station metadata for historical data ingestion
+#
+# Instructions:
+# 1. Each entry maps a CSV file containing air quality readings to its corresponding station
+# 2. If geojson_file is null, coordinates must be provided manually
+# 3. The station_name should match the name in the GeoJSON properties["estacion"] field
+# 4. All stations are in Bogotá, Colombia by default
+
+stations:
+  - csv_file: "carvajal,-bogota, colombia-air-quality.csv"
+    geojson_file: null
+    station_name: "Carvajal"
+    station_code: "CARV-01"
+    city: "Bogotá"
+    country: "Colombia"
+    # Manual coordinates (approximate location in Bogotá - Kennedy locality)
+    latitude: 4.614728
+    longitude: -74.139465
+    altitude: 2550
+    address: "Bogotá, Colombia"
+  
+  - csv_file: "centro-de alto rendimiento, bogota-air-quality.csv"
+    geojson_file: "GeoJSON_centro_alto_rendimiento.json"
+    station_name: "Centro de Alto Rendimiento"
+    station_code: "CAR-05"
+    city: "Bogotá"
+    country: "Colombia"
+    # Coordinates will be extracted from GeoJSON (but need conversion from projected system)
+    latitude: 4.674498
+    longitude: -74.103756
+    altitude: 2577
+    address: "Calle 63 No. 59A - 06"
+  
+  - csv_file: "las-ferias, bogota-air-quality.csv"
+    geojson_file: "GeoJSON_las_ferias.json"
+    station_name: "Las Ferias"
+    station_code: "FERIAS-09"
+    city: "Bogotá"
+    country: "Colombia"
+    latitude: 4.697500
+    longitude: -74.086389
+    altitude: 2565
+    address: "Bogotá, Colombia"
+  
+  - csv_file: "puente-aranda, bogota-air-quality.csv"
+    geojson_file: "GeoJSON_puente_aranda.json"
+    station_name: "Puente Aranda"
+    station_code: "PARANDA-13"
+    city: "Bogotá"
+    country: "Colombia"
+    latitude: 4.623889
+    longitude: -74.099167
+    altitude: 2560
+    address: "Bogotá, Colombia"
+  
+  - csv_file: "suba,-bogota, colombia-air-quality.csv"
+    geojson_file: "GeoJSON_Suba.json"
+    station_name: "Suba"
+    station_code: "SUBA-11"
+    city: "Bogotá"
+    country: "Colombia"
+    latitude: 4.757778
+    longitude: -74.089722
+    altitude: 2571
+    address: "Kr 111 No. 159A - 61"
+
+# Pollutant mapping from CSV columns to database pollutant names
+pollutant_mapping:
+  pm25:
+    name: "PM2.5"
+    unit: "µg/m³"
+    csv_column: "pm25"
+  
+  pm10:
+    name: "PM10"
+    unit: "µg/m³"
+    csv_column: "pm10"
+  
+  o3:
+    name: "O3"
+    unit: "ppb"
+    csv_column: "o3"
+  
+  no2:
+    name: "NO2"
+    unit: "ppb"
+    csv_column: "no2"
+  
+  so2:
+    name: "SO2"
+    unit: "ppb"
+    csv_column: "so2"
+  
+  co:
+    name: "CO"
+    unit: "ppm"
+    csv_column: "co"

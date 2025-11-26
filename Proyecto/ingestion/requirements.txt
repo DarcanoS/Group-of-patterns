@@ -1,0 +1,35 @@
+# Air Quality Platform - Ingestion Service Dependencies
+# Python 3.11+
+
+# Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+geoalchemy2>=0.14.0
+
+# HTTP clients for external APIs
+httpx>=0.25.0
+requests>=2.31.0
+
+# Data validation and parsing
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Configuration and utilities
+python-dotenv>=1.0.0
+PyYAML>=6.0.0
+
+# Date/time handling
+python-dateutil>=2.8.0
+
+# Logging and monitoring
+colorlog>=6.7.0
+
+# CSV processing
+pandas>=2.1.0
+
+# Scheduling (for periodic ingestion)
+apscheduler>=3.10.0
+
+# Testing (optional, for development)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
