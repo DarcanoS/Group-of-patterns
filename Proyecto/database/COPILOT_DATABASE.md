@@ -402,4 +402,92 @@ When prompted to generate DB scripts or migrations, you should:
 
 Keep everything aligned with the DBML model and with the rest of the Air Quality Platform architecture.
 
+---
+
+## 7. Security and credential management
+
+### Environment variables and .env files
+
+**ALWAYS use environment variables** for database credentials. Never hardcode passwords in scripts or documentation.
+
+#### Required files:
+
+- **`.env.example`** - Template with placeholder values (COMMIT this to Git)
+- **`.env`** - Actual credentials (NEVER commit, must be in `.gitignore`)
+
+#### .env.example structure:
+```bash
+# Database credentials
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+DATABASE_URL_ADMIN=postgresql://admin:password@localhost:5432/dbname
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=air_quality_db
+DB_APP_USER=air_quality_app
+DB_APP_PASSWORD=CHANGE_THIS_PASSWORD
+DB_ADMIN_USER=air_quality_admin
+DB_ADMIN_PASSWORD=CHANGE_THIS_PASSWORD
+```
+
+### Temporary documentation
+
+Place any **temporary or process documentation** (like connection info, setup logs, testing notes) in:
+
+- **`database/.copilot_temp/`** - Already in `.gitignore`, will not be committed
+
+Examples of files that go here:
+- Connection information summaries
+- Setup process logs
+- Testing documentation
+- Any files created during Copilot chat sessions that explain what was done
+
+Only keep **essential, permanent documentation** in the main `database/` folder:
+- `README.md` - How to set up and use the database
+- `COPILOT_DATABASE.md` - Instructions for Copilot (this file)
+- SQL scripts (`init_schema.sql`, `seed_data.sql`, etc.)
+- `.env.example` - Template for configuration
+
+### When generating code that uses database connections:
+
+Always reference environment variables:
+
+```python
+# Good ✅
+import os
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Bad ❌
+DATABASE_URL = "postgresql://user:password@localhost:5432/db"
+```
+
+```bash
+# Good ✅
+psql $DATABASE_URL -f script.sql
+
+# Bad ❌
+psql postgresql://user:password@localhost:5432/db -f script.sql
+```
+
+---
+
+## 8. File organization rules
+
+When generating or creating files in the `database/` folder:
+
+### Keep in Git (permanent files):
+- `README.md`
+- `COPILOT_DATABASE.md`
+- `init_schema.sql`
+- `seed_data.sql`
+- `setup_users_permissions.sql`
+- `.env.example` (template only, no real passwords)
+- Migration scripts (if using Alembic/similar)
+
+### Do NOT commit (in .gitignore):
+- `.env` (actual credentials)
+- `.copilot_temp/` (temporary documentation)
+- `*.sql.backup`
+- `*.dump`
+- Any file with actual passwords or sensitive data
+
 ```
