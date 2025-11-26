@@ -1,0 +1,65 @@
+# MongoDB Docker Compose Configuration
+# Air Quality Platform - Configuration Database
+#
+# Usage:
+#   podman-compose up -d     # Start MongoDB
+#   podman-compose down      # Stop MongoDB
+#   podman-compose logs -f   # View logs
+
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: air-quality-mongodb
+    restart: unless-stopped
+    
+    ports:
+      - "27017:27017"
+    
+    environment:
+      # Development mode - no authentication
+      # For production, uncomment authentication settings below
+      MONGO_INITDB_DATABASE: air_quality_config
+      
+      # PRODUCTION: Uncomment these and set in .env
+      # MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+      # MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-changeme}
+    
+    volumes:
+      # Persistent data storage
+      - mongodb_data:/data/db
+      
+      # Configuration and logs
+      - mongodb_config:/data/configdb
+      
+      # Initialization scripts (optional - we run these manually)
+      # - ./mongo_init.js:/docker-entrypoint-initdb.d/01-init.js:ro
+      # - ./mongo_indexes.js:/docker-entrypoint-initdb.d/02-indexes.js:ro
+    
+    networks:
+      - air-quality-network
+    
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    
+    # PRODUCTION: Uncomment to enable authentication
+    # command: --auth
+
+volumes:
+  mongodb_data:
+    driver: local
+    name: air_quality_mongodb_data
+  
+  mongodb_config:
+    driver: local
+    name: air_quality_mongodb_config
+
+networks:
+  air-quality-network:
+    driver: bridge
+    name: air_quality_network
