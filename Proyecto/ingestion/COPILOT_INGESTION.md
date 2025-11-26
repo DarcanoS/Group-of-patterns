@@ -52,7 +52,7 @@ ingestion/
       aggregation_service.py# optional: computes AirQualityDailyStats
     __main__.py             # optional: makes `python -m ingestion.app` work
 Dockerfile
-````
+```
 
 You may adjust the exact file names, but keep these concepts:
 
