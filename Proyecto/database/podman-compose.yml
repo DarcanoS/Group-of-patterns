@@ -52,7 +52,7 @@ services:
 
   # MongoDB for user preferences and dashboard configs
   mongodb:
-    image: docker.io/library/mongo:7.0
+    image: docker.io/library/mongo:4.4
     container_name: air-quality-mongodb
     restart: unless-stopped
     
