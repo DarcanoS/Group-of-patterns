@@ -16,25 +16,38 @@ The platform uses a **hybrid database architecture**:
 - Database created (e.g., `air_quality_db`)
 - Database user with appropriate permissions
 
-## Files
+## 📁 Folder Structure
 
-### PostgreSQL (Relational)
-- `init_schema.sql` - Creates all database tables, indexes, and constraints
-- `setup_users_permissions.sql` - Grants appropriate permissions to application user
-- `db_helper.sh` - Helper script for common database operations
-
-### MongoDB (NoSQL)
-- `mongo_init.js` - Creates MongoDB collections with validation schemas
-- `mongo_indexes.js` - Creates performance indexes for MongoDB
-- `mongo_docker_compose.yml` - Docker Compose configuration for MongoDB
-- `MONGODB_SETUP.md` - Complete MongoDB setup and usage guide
-
-### Configuration
-- `.env.example` - Template for environment variables (PostgreSQL + MongoDB)
-- `.env` - **YOUR credentials** (NEVER commit this file, already in .gitignore)
-- `COPILOT_DATABASE.md` - Instructions for GitHub Copilot (v2)
-- `COPILOT_DATABASE_V2.md` - Version 2 update instructions
-- `.copilot_temp/` - Temporary documentation (not committed to Git)
+```
+database/
+├── README.md                          # This file - Setup guide
+├── .env.example                       # Template for environment variables
+├── .env                              # Your credentials (gitignored)
+├── db_helper.sh                      # Helper script for database operations
+│
+├── postgresql/                        # PostgreSQL schema and scripts
+│   ├── init_schema.sql               # Creates all tables, indexes, constraints
+│   ├── setup_users_permissions.sql   # Grants permissions to app user
+│   └── seed_data.sql                 # Initial reference data
+│
+├── mongodb/                          # MongoDB configuration
+│   ├── mongo_init.js                 # Creates collections with validation
+│   ├── mongo_indexes.js              # Creates performance indexes
+│   └── mongo_docker_compose.yml      # Docker Compose for MongoDB
+│
+├── scripts/                          # Utility scripts
+│   ├── load_seed_data.py             # Python loader for seed data
+│   ├── verify_ingestion.py           # Verify data ingestion
+│   └── mongo_python_examples.py      # MongoDB Python examples
+│
+├── docs/                             # Documentation
+│   ├── COPILOT_DATABASE_V2.md        # Instructions for GitHub Copilot
+│   ├── INGESTION_SUMMARY.md          # Summary of data ingestion process
+│   └── MONGODB_SETUP.md              # Complete MongoDB setup guide
+│
+└── .copilot_temp/                    # Temporary docs (gitignored)
+    └── ...
+```
 
 ## Quick Start
 
@@ -86,7 +99,7 @@ GRANT CONNECT ON DATABASE air_quality_db TO air_quality_app;
 
 **Option 1: Using the helper script (recommended)**
 ```bash
-./db_helper.sh run-admin init_schema.sql
+./db_helper.sh run-admin postgresql/init_schema.sql
 ```
 
 **Option 2: Direct connection**
@@ -95,13 +108,13 @@ GRANT CONNECT ON DATABASE air_quality_db TO air_quality_app;
 cd Proyecto/database/
 
 # Run the schema creation script
-podman exec -i postgis-db psql -U air_quality_admin -d air_quality_db < init_schema.sql
+podman exec -i postgis-db psql -U air_quality_admin -d air_quality_db < postgresql/init_schema.sql
 ```
 
 **Option 3: With environment variable**
 ```bash
 source .env
-psql $DATABASE_URL_ADMIN -f init_schema.sql
+psql $DATABASE_URL_ADMIN -f postgresql/init_schema.sql
 ```
 
 ### 3. Grant Permissions to Application User
@@ -110,13 +123,13 @@ After creating the schema, grant specific permissions to the application user:
 
 **Using the helper script:**
 ```bash
-./db_helper.sh run-admin setup_users_permissions.sql
+./db_helper.sh run-admin postgresql/setup_users_permissions.sql
 ```
 
 **Or directly:**
 ```bash
 # Connect as admin user and run the permissions script
-podman exec -i postgis-db psql -U air_quality_admin -d air_quality_db < setup_users_permissions.sql
+podman exec -i postgis-db psql -U air_quality_admin -d air_quality_db < postgresql/setup_users_permissions.sql
 ```
 
 **The script automatically grants:**
@@ -225,11 +238,12 @@ Comprehensive indexing strategy for:
 
 ## Next Steps
 
-After running `init_schema.sql`, you should:
+After running `postgresql/init_schema.sql`, you should:
 
-1. Run `seed_data.sql` to populate initial reference data
+1. Run `postgresql/seed_data.sql` to populate initial reference data (or use `scripts/load_seed_data.py`)
 2. Configure your backend application's `DATABASE_URL`
 3. Verify connectivity from the backend service
+4. (Optional) Set up MongoDB using `docs/MONGODB_SETUP.md`
 
 ## Troubleshooting
 
@@ -317,7 +331,7 @@ EOF
 docker exec -i air-quality-postgres psql \
   -U air_quality_admin \
   -d air_quality_db \
-  < init_schema.sql
+  < postgresql/init_schema.sql
 
 # Grant permissions to app user
 docker exec -i air-quality-postgres psql -U air_quality_admin -d air_quality_db <<EOF

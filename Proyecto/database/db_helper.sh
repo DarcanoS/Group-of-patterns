@@ -122,8 +122,8 @@ case "$1" in
         echo ""
         echo "Examples:"
         echo "  $0 admin"
-        echo "  $0 run-admin init_schema.sql"
-        echo "  $0 run-admin seed_data.sql"
+        echo "  $0 run-admin postgresql/init_schema.sql"
+        echo "  $0 run-admin postgresql/seed_data.sql"
         echo "  $0 info"
         exit 1
         ;;
