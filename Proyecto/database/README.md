@@ -11,6 +11,11 @@ The platform uses a **hybrid database architecture**:
 
 ## Prerequisites
 
+### Option 1: Using Containers (Recommended)
+- **Podman** or **Docker** installed
+- See [CONTAINERS.md](CONTAINERS.md) for complete container setup
+
+### Option 2: Local Installation
 - **PostgreSQL 14+** installed
 - **PostGIS** extension available
 - Database created (e.g., `air_quality_db`)
@@ -41,15 +46,22 @@ database/
 │   └── mongo_python_examples.py      # MongoDB Python examples
 │
 ├── docs/                             # Documentation
-│   ├── COPILOT_DATABASE_V2.md        # Instructions for GitHub Copilot
 │   ├── INGESTION_SUMMARY.md          # Summary of data ingestion process
-│   └── MONGODB_SETUP.md              # Complete MongoDB setup guide
+│   ├── MONGODB_SETUP.md              # Complete MongoDB setup guide
+│   └── README.md                     # Documentation index
+│
+├── podman-compose.yml                # Container orchestration (Podman/Docker)
+├── .env.containers                   # Container configuration template
+├── containers.sh                     # Container management script
+├── CONTAINERS.md                     # Container setup guide
 │
 └── .copilot_temp/                    # Temporary docs (gitignored)
     └── ...
 ```
 
 ## Quick Start
+
+> **🐳 Using Containers?** See [CONTAINERS.md](CONTAINERS.md) for Podman/Docker setup (recommended for development and production).
 
 ### 0. Setup Environment Variables (FIRST!)
 

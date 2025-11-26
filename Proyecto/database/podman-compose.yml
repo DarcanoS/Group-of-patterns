@@ -1,0 +1,111 @@
+version: '3.8'
+
+# Air Quality Platform - Database Containers
+# Compatible with Podman and Docker Compose
+# 
+# Usage with Podman:
+#   podman-compose up -d
+#   podman-compose down
+#
+# Usage with Docker:
+#   docker-compose up -d
+#   docker-compose down
+
+services:
+  # PostgreSQL with PostGIS extension
+  postgis:
+    image: docker.io/postgis/postgis:17-3.5
+    container_name: air-quality-postgis
+    restart: unless-stopped
+    
+    environment:
+      # PostgreSQL superuser
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_pass}
+      
+      # Default database
+      POSTGRES_DB: air_quality_db
+      
+      # PostGIS configuration
+      POSTGIS_VERSION: 3.5.2
+      
+      # Encoding
+      LANG: en_US.utf8
+      
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    
+    volumes:
+      # Persistent data
+      - postgis-data:/var/lib/postgresql/data
+      
+      # Initialization scripts (run on first start)
+      - ./postgresql/init_schema.sql:/docker-entrypoint-initdb.d/01-init_schema.sql:ro
+      - ./postgresql/setup_users_permissions.sql:/docker-entrypoint-initdb.d/02-setup_permissions.sql:ro
+      - ./postgresql/seed_data.sql:/docker-entrypoint-initdb.d/03-seed_data.sql:ro
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d air_quality_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    
+    networks:
+      - air-quality-network
+
+  # MongoDB for user preferences and dashboard configs
+  mongodb:
+    image: docker.io/library/mongo:7.0
+    container_name: air-quality-mongodb
+    restart: unless-stopped
+    
+    environment:
+      # Root user credentials
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-mongo_secure_pass}
+      
+      # Default database
+      MONGO_INITDB_DATABASE: air_quality_config
+    
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    
+    volumes:
+      # Persistent data
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+      
+      # Initialization scripts
+      - ./mongodb/mongo_init.js:/docker-entrypoint-initdb.d/01-mongo_init.js:ro
+      - ./mongodb/mongo_indexes.js:/docker-entrypoint-initdb.d/02-mongo_indexes.js:ro
+    
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    
+    networks:
+      - air-quality-network
+
+# Named volumes for data persistence
+volumes:
+  postgis-data:
+    driver: local
+    name: air-quality-postgis-data
+  
+  mongodb-data:
+    driver: local
+    name: air-quality-mongodb-data
+  
+  mongodb-config:
+    driver: local
+    name: air-quality-mongodb-config
+
+# Network for inter-container communication
+networks:
+  air-quality-network:
+    driver: bridge
+    name: air-quality-network

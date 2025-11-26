@@ -92,11 +92,13 @@ data_air/
 # ============================================================================
 # Environment files with credentials (NEVER commit these)
 Proyecto/database/.env
+Proyecto/database/.env.containers.local
 Proyecto/backend/.env
 Proyecto/ingestion/.env
 Proyecto/frontend/.env
 *.env
 !*.env.example
+!*.env.containers
 
 # Temporary Copilot documentation (process documentation, not needed in repo)
 Proyecto/database/.copilot_temp/
