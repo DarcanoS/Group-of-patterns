@@ -86,3 +86,49 @@ SYNC_WORKFLOW.md
 # GitHub configuration
 .github/
 data_air/
+
+# ============================================================================
+# DATABASE - Sensitive credentials and temporary documentation
+# ============================================================================
+# Environment files with credentials (NEVER commit these)
+Proyecto/database/.env
+Proyecto/backend/.env
+Proyecto/ingestion/.env
+Proyecto/frontend/.env
+*.env
+!*.env.example
+
+# Temporary Copilot documentation (process documentation, not needed in repo)
+Proyecto/database/.copilot_temp/
+Proyecto/backend/.copilot_temp/
+Proyecto/frontend/.copilot_temp/
+Proyecto/ingestion/.copilot_temp/
+.copilot_temp/
+
+# Database dumps and backups
+*.sql.backup
+*.dump
+*.sql.gz
+
+# Python environment and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node modules
+node_modules/
+.npm
+.pnpm-debug.log*
+.yarn-integrity
+
+# IDE
+.idea/
+*.iml
+.vscode/settings.json
+.vscode/launch.json
