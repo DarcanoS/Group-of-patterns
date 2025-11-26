@@ -19,7 +19,7 @@ Este servicio implementa:
 
 ## 🎨 Patrones de Diseño
 
-### Adapter Pattern
+### Adapter Pattern ⭐
 
 El patrón **Adapter** está implementado en `app/providers/`:
 
@@ -31,6 +31,10 @@ Esto permite:
 - Unificar diferentes fuentes de datos (CSV, APIs)
 - Desacoplar la lógica de ingestion de las fuentes específicas
 - Facilitar la adición de nuevas fuentes sin modificar el core
+
+**📚 Documentación Completa**:
+- **[DESIGN_PATTERNS.md](./DESIGN_PATTERNS.md)**: Teoría, ejemplos de código, referencias
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)**: Diagramas visuales, flujos de datos, casos de uso
 
 ## 📁 Estructura
 
