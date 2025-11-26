@@ -19,19 +19,16 @@ services:
     restart: unless-stopped
     
     environment:
-      # PostgreSQL superuser
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_pass}
-      
-        # PostgreSQL superuser (customizable)
-        POSTGRES_USER: ${DB_ADMIN_USER:-air_quality_admin}
-        POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-admin_secure_password}
-        # Default database
-        POSTGRES_DB: air_quality_db
-        # PostGIS configuration
-        POSTGIS_VERSION: 3.5.2
-        # Encoding
-        LANG: en_US.utf8
+      # PostgreSQL superuser (customizable)
+      POSTGRES_USER: ${DB_ADMIN_USER:-air_quality_admin}
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-admin_secure_password}
+      # Default database
+      POSTGRES_DB: air_quality_db
+      # PostGIS configuration
+      POSTGIS_VERSION: 3.5.2
+      # Encoding
+      LANG: en_US.utf8
+    
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     
@@ -42,15 +39,13 @@ services:
       # Initialization scripts (run on first start)
       - ./postgresql/init_schema.sql:/docker-entrypoint-initdb.d/01-init_schema.sql:ro
       - ./postgresql/setup_users_permissions.sql:/docker-entrypoint-initdb.d/02-setup_permissions.sql:ro
-        test: ["CMD-SHELL", "pg_isready -U ${DB_ADMIN_USER:-air_quality_admin} -d air_quality_db"]
-          POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-admin_secure_password}
+    
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d air_quality_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_ADMIN_USER:-air_quality_admin} -d air_quality_db"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-          POSTGRES_USER: ${DB_ADMIN_USER:-air_quality_admin}
     
     networks:
       - air-quality-network
