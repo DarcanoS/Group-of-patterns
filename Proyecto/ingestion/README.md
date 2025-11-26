@@ -247,10 +247,45 @@ Requiere que las tablas ya estén creadas:
 
 El servicio **no** crea tablas ni datos de catálogo.
 
+## 🚀 Deployment en Servidor Ubuntu
+
+Para desplegar este servicio en un servidor Ubuntu con ingestion automática (cada 10 minutos), consulta la **[Guía de Deployment](./README_DEPLOYMENT.md)**.
+
+### Deployment Rápido
+
+```bash
+# 1. Clonar repositorio en el servidor
+git clone https://github.com/your-org/air-quality-platform.git
+cd air-quality-platform/Proyecto/ingestion
+
+# 2. Ejecutar script de deployment
+chmod +x deploy/deploy.sh
+./deploy/deploy.sh
+
+# 3. Configurar .env
+sudo nano /opt/air-quality-ingestion/.env
+
+# 4. Verificar instalación
+./deploy/health_check.sh
+```
+
+**Opciones de automatización**:
+- **Systemd Timer** (recomendado): Integrado con sistema, logs centralizados
+- **Cron Job**: Más simple, compatible con cualquier Linux
+
+**Ubicaciones en producción**:
+- Aplicación: `/opt/air-quality-ingestion/`
+- Logs: `/var/log/air-quality-ingestion/`
+- Scripts: `deploy/`
+
+📖 **[Ver Guía Completa de Deployment →](./README_DEPLOYMENT.md)**
+
+---
+
 ## 🔮 Trabajo Futuro
 
 - [x] ~~Implementar `AqicnAdapter` para API en tiempo real~~ ✅ **COMPLETADO**
-- [ ] Agregar scheduler para ingestion periódica
+- [x] ~~Agregar scheduler para ingestion periódica~~ ✅ **COMPLETADO** (systemd/cron)
 - [ ] Implementar `AggregationService` para stats diarias
 - [ ] Agregar más tests unitarios
 - [ ] Mejorar cálculo de AQI (más pollutants)
@@ -265,3 +300,4 @@ Para más detalles, consulta:
 - **[docs/DESIGN_PATTERNS.md](./docs/DESIGN_PATTERNS.md)** - Patrones de diseño implementados
 - **[docs/AQICN_USAGE.md](./docs/AQICN_USAGE.md)** - Guía de uso de ingestion en tiempo real
 - **[docs/API_AQICN.md](./docs/API_AQICN.md)** - Especificación del cliente AQICN
+- **[README_DEPLOYMENT.md](./README_DEPLOYMENT.md)** - 🚀 Guía completa de deployment en Ubuntu
