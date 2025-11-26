@@ -7,7 +7,7 @@
 ## 🗺️ Guía de Navegación
 
 ### Para empezar rápido
-👉 **[README.md](./README.md)** - Inicio rápido, instalación y uso básico
+👉 **[../README.md](../README.md)** - Inicio rápido, instalación y uso básico
 
 ### Para entender la arquitectura
 👉 **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Diagramas, flujos de datos y casos de uso
@@ -15,17 +15,15 @@
 ### Para entender los patrones de diseño
 👉 **[DESIGN_PATTERNS.md](./DESIGN_PATTERNS.md)** - Teoría, implementación y ejemplos
 
-### Para implementar integración con API externa
-👉 **[API_AQICN.md](./API_AQICN.md)** - Especificación de cliente AQICN
-
-### Para contribuir al proyecto
-👉 **[COPILOT_INGESTION.md](./COPILOT_INGESTION.md)** - Instrucciones para Copilot/desarrolladores
+### Para usar la API de AQICN
+👉 **[AQICN_USAGE.md](./AQICN_USAGE.md)** - Guía de uso de ingestion en tiempo real
+👉 **[API_AQICN.md](./API_AQICN.md)** - Especificación técnica del cliente AQICN
 
 ---
 
 ## 📖 Resumen de Cada Documento
 
-### 1. [README.md](./README.md) - Documentación de Usuario
+### 1. [../README.md](../README.md) - Documentación Principal
 **Audiencia**: Desarrolladores que usan el servicio
 
 **Contenido**:
@@ -38,7 +36,7 @@
 
 **Cuándo leerlo**: 
 - Primera vez usando el servicio
-- Necesitas ejecutar ingestion histórica
+- Necesitas ejecutar ingestion histórica o en tiempo real
 - Configurando environment variables
 
 ---
@@ -113,8 +111,27 @@
 
 ---
 
-### 4. [API_AQICN.md](./API_AQICN.md) - Cliente AQICN
-**Audiencia**: Desarrolladores implementando ingestion en tiempo real
+### 4. [AQICN_USAGE.md](./AQICN_USAGE.md) - Guía de Uso AQICN ✅ **NUEVO**
+**Audiencia**: Desarrolladores usando ingestion en tiempo real
+
+**Contenido**:
+- ✅ Cómo usar el servicio de ingestion en tiempo real
+- ✅ Configuración del token de API AQICN
+- ✅ Ejecutar tests
+- ✅ Resultado esperado
+- ✅ Flujo de trabajo completo
+- ✅ Mapeo de estaciones
+- ✅ Automatización con cron/systemd
+
+**Cuándo leerlo**:
+- Ejecutando ingestion en tiempo real por primera vez
+- Configurando automatización
+- Debugging de problemas con AQICN API
+
+---
+
+### 5. [API_AQICN.md](./API_AQICN.md) - Especificación Técnica AQICN
+**Audiencia**: Desarrolladores implementando o extendiendo `AqicnAdapter`
 
 **Contenido**:
 - 📡 Especificación de API AQICN/WAQI
@@ -130,36 +147,10 @@
 - ⚠️ Consideraciones de uso aceptable
 
 **Cuándo leerlo**:
-- Implementando `AqicnAdapter`
+- Implementando funcionalidad relacionada con AQICN
 - Debugging de llamadas a API
 - Entendiendo formato de respuesta AQICN
-
-**Próximo paso**: Implementar `app/providers/aqicn_adapter.py` basado en esta spec
-
----
-
-### 5. [COPILOT_INGESTION.md](./COPILOT_INGESTION.md) - Guía de Desarrollo
-**Audiencia**: GitHub Copilot, desarrolladores contribuyentes
-
-**Contenido**:
-- 📋 Tech stack completo
-- 📦 Estructura de proyecto recomendada
-- ⚙️ Variables de entorno
-- 🗄️ Modelo de datos (DBML)
-- 🔧 DTOs y normalización requerida
-- 🎨 Especificación del Adapter Pattern
-- 🔄 Flujo de ingestion (paso a paso)
-- 📊 Agregación de stats diarias
-- 🐛 Error handling y logging
-- ⏱️ Scheduling y ejecución
-- 🐳 Dockerfile requirements
-- 📜 Reglas generales de código
-
-**Cuándo leerlo**:
-- Contribuyendo código nuevo
-- Configurando entorno de desarrollo
-- Entendiendo convenciones del proyecto
-- Usando Copilot para generar código
+- Extendiendo el cliente con nuevos endpoints
 
 ---
 
@@ -167,20 +158,21 @@
 
 ### 🚀 Ruta "Quick Start" (Usuario)
 ```
-1. README.md (sección "Uso")
+1. ../README.md (sección "Uso")
    ↓
 2. Configurar .env
    ↓
-3. Ejecutar: python -m app.main --mode historical
+3a. Ingestion Histórica: python -m app.main --mode historical
+3b. Ingestion Tiempo Real: python -m app.main --mode realtime
 ```
 
 ### 🏗️ Ruta "Arquitectura" (Desarrollador)
 ```
-1. README.md (descripción general)
+1. ../README.md (descripción general)
    ↓
 2. ARCHITECTURE.md (flujos y diagramas)
    ↓
-3. Ver código: app/main.py → ingestion_service.py → csv_adapter.py
+3. Ver código: app/main.py → ingestion_service.py → csv_adapter.py / aqicn_adapter.py
 ```
 
 ### 📐 Ruta "Patrones de Diseño" (Estudiante)
@@ -194,17 +186,15 @@
 4. Ejercicio: Implementar MockAdapter para testing
 ```
 
-### 🔧 Ruta "Implementar Feature" (Contribuidor)
+### 🔧 Ruta "Usar Ingestion Tiempo Real" (Desarrollador)
 ```
-1. COPILOT_INGESTION.md (convenciones)
+1. AQICN_USAGE.md (guía completa)
    ↓
-2. DESIGN_PATTERNS.md (ejemplo de extensión)
+2. Configurar TOKEN_API_AQICN en .env
    ↓
-3. API_AQICN.md (si es integración API)
+3. python tests/test_aqicn_api.py (verificar API)
    ↓
-4. Implementar siguiendo patrón existente
-   ↓
-5. Revisar ARCHITECTURE.md para casos de uso
+4. python -m app.main --mode realtime
 ```
 
 ---
@@ -212,9 +202,9 @@
 ## 🔍 Buscar por Tema
 
 ### Configuración
-- [README.md § Configuración](./README.md#⚙️-configuración)
-- [README.md § .env variables](./README.md#1-variables-de-entorno)
-- [COPILOT_INGESTION.md § Configuration](./COPILOT_INGESTION.md#2-configuration-and-environment)
+- [../README.md § Configuración](../README.md#⚙️-configuración)
+- [../README.md § .env variables](../README.md#1-variables-de-entorno)
+- [AQICN_USAGE.md § Configuración](./AQICN_USAGE.md#1-configuración)
 
 ### Patrones de Diseño
 - [DESIGN_PATTERNS.md § Adapter Pattern](./DESIGN_PATTERNS.md#1-adapter-pattern-patrón-adaptador)
@@ -222,38 +212,41 @@
 - [ARCHITECTURE.md § Adapter Sequence](./ARCHITECTURE.md#🎨-adapter-pattern---secuencia-de-ejecución)
 
 ### Datos
-- [README.md § Datos de Entrada](./README.md#📊-datos-de-entrada)
+- [../README.md § Datos de Entrada](../README.md#📊-datos-de-entrada)
 - [ARCHITECTURE.md § Data Transformation](./ARCHITECTURE.md#📊-transformación-de-datos)
-- [COPILOT_INGESTION.md § DBML Model](./COPILOT_INGESTION.md#3-database-integration-aligned-with-dbml)
+
+### API AQICN
+- [AQICN_USAGE.md](./AQICN_USAGE.md) - Guía completa de uso
+- [API_AQICN.md](./API_AQICN.md) - Especificación técnica
 
 ### Extensibilidad
 - [DESIGN_PATTERNS.md § Agregar Nueva Fuente](./DESIGN_PATTERNS.md#📝-ejemplo-completo-agregar-nueva-fuente-de-datos)
 - [ARCHITECTURE.md § Extensibilidad](./ARCHITECTURE.md#🧩-extensibilidad)
-- [API_AQICN.md](./API_AQICN.md) (ejemplo de integración API)
 
 ### Performance
 - [ARCHITECTURE.md § Performance](./ARCHITECTURE.md#📈-performance-considerations)
-- Optimizaciones: caching, bulk processing, duplicate detection
 
 ### Testing
 - [DESIGN_PATTERNS.md § Testing](./DESIGN_PATTERNS.md#🧪-testing-de-patrones)
 - [ARCHITECTURE.md § Testing Strategy](./ARCHITECTURE.md#🎯-testing-strategy)
+- [AQICN_USAGE.md § Tests](./AQICN_USAGE.md#3-ejecutar-pruebas)
 
 ### Deployment
-- [README.md § Docker](./README.md#docker)
+- [../README.md § Docker](../README.md#docker)
 - [ARCHITECTURE.md § Deployment](./ARCHITECTURE.md#🚀-deployment)
+- [AQICN_USAGE.md § Automatización](./AQICN_USAGE.md#🔄-automatización)
 
 ---
 
 ## 📊 Matriz de Documentos
 
-| Documento | Usuario | Dev | Arquitecto | Estudiante | Copilot |
-|-----------|---------|-----|------------|------------|---------|
-| README.md | ✅✅✅ | ✅✅ | ✅ | ✅ | - |
-| ARCHITECTURE.md | ✅ | ✅✅✅ | ✅✅✅ | ✅✅✅ | ✅ |
-| DESIGN_PATTERNS.md | - | ✅✅ | ✅✅✅ | ✅✅✅ | ✅ |
-| API_AQICN.md | - | ✅✅✅ | ✅ | ✅ | ✅✅ |
-| COPILOT_INGESTION.md | - | ✅✅ | ✅✅ | ✅ | ✅✅✅ |
+| Documento | Usuario | Dev | Arquitecto | Estudiante |
+|-----------|---------|-----|------------|------------|
+| README.md | ✅✅✅ | ✅✅ | ✅ | ✅ |
+| ARCHITECTURE.md | ✅ | ✅✅✅ | ✅✅✅ | ✅✅✅ |
+| DESIGN_PATTERNS.md | - | ✅✅ | ✅✅✅ | ✅✅✅ |
+| AQICN_USAGE.md | ✅✅ | ✅✅✅ | ✅ | ✅✅ |
+| API_AQICN.md | - | ✅✅✅ | ✅✅ | ✅ |
 
 **Leyenda**: ✅ = Útil, ✅✅ = Muy útil, ✅✅✅ = Esencial
 
@@ -265,11 +258,17 @@
 ingestion/
 │
 ├── 📘 README.md                 ← Inicio: Instalación y uso
-├── 📘 ARCHITECTURE.md           ← Diagramas y flujos visuales
-├── 📘 DESIGN_PATTERNS.md        ← Teoría de patrones
-├── 📘 API_AQICN.md              ← Spec de cliente AQICN
-├── 📘 COPILOT_INGESTION.md      ← Guía de desarrollo
-├── 📘 DOCS_INDEX.md             ← Este archivo (índice)
+│
+├── 📂 docs/                     ← Documentación técnica
+│   ├── ARCHITECTURE.md          ← Diagramas y flujos visuales
+│   ├── DESIGN_PATTERNS.md       ← Teoría de patrones
+│   ├── AQICN_USAGE.md          ← Guía de uso tiempo real ✅ NUEVO
+│   ├── API_AQICN.md            ← Spec técnica de cliente AQICN
+│   └── DOCS_INDEX.md           ← Este archivo (índice)
+│
+├── 📂 tests/                    ← Tests ✅ REORGANIZADO
+│   ├── test_aqicn_api.py       ← Test de API AQICN
+│   └── test_aqicn_ingestion.py ← Test de ingestion completa
 │
 ├── 📄 .env.example              ← Template de configuración
 ├── 📄 requirements.txt          ← Dependencias Python
@@ -281,6 +280,9 @@ ingestion/
 │   ├── db/
 │   ├── domain/
 │   ├── providers/              ← 🎨 Adapter Pattern
+│   │   ├── base_adapter.py
+│   │   ├── historical_csv_adapter.py
+│   │   └── aqicn_adapter.py   ← ✅ IMPLEMENTADO
 │   └── services/
 │
 └── 📂 data/
@@ -292,7 +294,7 @@ ingestion/
 ## ❓ FAQs
 
 ### "¿Por dónde empiezo?"
-→ [README.md](./README.md)
+→ [../README.md](../README.md)
 
 ### "¿Cómo funciona internamente?"
 → [ARCHITECTURE.md](./ARCHITECTURE.md) - Sección "Flujo de Datos Completo"
@@ -303,8 +305,11 @@ ingestion/
 ### "¿Cómo agrego una nueva fuente de datos?"
 → [DESIGN_PATTERNS.md § Ejemplo Completo](./DESIGN_PATTERNS.md#📝-ejemplo-completo-agregar-nueva-fuente-de-datos)
 
-### "¿Cómo implemento el cliente AQICN?"
-→ [API_AQICN.md](./API_AQICN.md) + [COPILOT_INGESTION.md § Adapter Pattern](./COPILOT_INGESTION.md#5-adapter-pattern-for-external-providers-mandatory-design-pattern)
+### "¿Cómo uso la ingestion en tiempo real con AQICN?"
+→ [AQICN_USAGE.md](./AQICN_USAGE.md) - Guía completa paso a paso
+
+### "¿Cómo extiendo el cliente AQICN?"
+→ [API_AQICN.md](./API_AQICN.md) - Especificación técnica completa
 
 ### "¿Cómo funciona la normalización de datos?"
 → [ARCHITECTURE.md § Transformación de Datos](./ARCHITECTURE.md#📊-transformación-de-datos)
