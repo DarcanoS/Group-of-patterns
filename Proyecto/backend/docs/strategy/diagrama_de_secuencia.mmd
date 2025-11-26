@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant Client
+    participant RiskService
+    participant SimpleStrategy as SimpleRiskCategoryStrategy
+    participant WhoStrategy as WhoRiskCategoryStrategy
+
+    Client->>RiskService: request get_category(aqi: int)
+    alt Strategy = SimpleRiskCategoryStrategy
+        RiskService->>SimpleStrategy: get_category(aqi: int)
+        SimpleStrategy-->>RiskService: RiskCategory
+    else Strategy = WhoRiskCategoryStrategy
+        RiskService->>WhoStrategy: get_category(aqi: int)
+        WhoStrategy-->>RiskService: RiskCategory
+    end
+    RiskService-->>Client: RiskCategory response

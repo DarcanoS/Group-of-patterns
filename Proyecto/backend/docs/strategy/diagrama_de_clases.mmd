@@ -1,0 +1,20 @@
+classDiagram
+    class RiskCategoryStrategy {
+        <<interface>>
+        +get_category(aqi: int) RiskCategory
+    }
+    class SimpleRiskCategoryStrategy {
+        +get_category(aqi: int) RiskCategory
+    }
+    class WhoRiskCategoryStrategy {
+        +get_category(aqi: int) RiskCategory
+    }
+    class RiskService {
+        -strategy: RiskCategoryStrategy
+        +set_strategy(s: RiskCategoryStrategy)
+        +get_category(aqi: int) RiskCategory
+    }
+
+    RiskCategoryStrategy <|.. SimpleRiskCategoryStrategy
+    RiskCategoryStrategy <|.. WhoRiskCategoryStrategy
+    RiskService o-- RiskCategoryStrategy : uses

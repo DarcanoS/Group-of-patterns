@@ -1,0 +1,49 @@
+flowchart TD
+    A[Inicio: Solicitud de configuracion de dashboard] --> B{Tipo de configuracion?}
+
+    B -->|Basica| C[clone]
+    B -->|Personalizada| D[clone_for_user]
+    B -->|Minima/Movil| E[get_minimal_config]
+
+    C --> F[copy.deepcopy configuracion base]
+    F --> G[Retornar clon completo]
+    G --> Z[Fin]
+
+    D --> H[clone - crear copia profunda]
+    H --> I[Agregar user_id]
+    I --> J{default_location proporcionado?}
+    J -->|Si| K[Configurar preferences.default_location]
+    J -->|No| L[Mantener None]
+
+    K --> M[Configurar preferences.theme]
+    L --> M
+    M --> N[Retornar configuracion personalizada]
+    N --> Z
+
+    E --> O[clone - crear copia profunda]
+    O --> P[Filtrar widgets]
+    P --> Q{tipo de widget esencial?}
+    Q -->|aqi-display| R[Mantener widget]
+    Q -->|recommendations| R
+    Q -->|Otro tipo| S[Remover widget]
+
+    R --> T{Mas widgets?}
+    S --> T
+    T -->|Si| Q
+    T -->|No| U[Cambiar layout a minimal]
+
+    U --> V[Retornar configuracion minima]
+    V --> Z
+
+    style A fill:#e1f5ff
+    style C fill:#90EE90
+    style D fill:#FFEB99
+    style E fill:#FFB347
+    style F fill:#E1E1E1
+    style H fill:#E1E1E1
+    style O fill:#E1E1E1
+    style Z fill:#e1ffe1
+
+    classDef cloneOp fill:#D1E8FF,stroke:#4A90E2
+    class F,H,O cloneOp
+

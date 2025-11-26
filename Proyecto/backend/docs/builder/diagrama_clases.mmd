@@ -1,0 +1,50 @@
+classDiagram
+    class DashboardResponseSchema {
+        +StationResponse station
+        +List~CurrentReadingResponse~ current_readings
+        +List~DailyStatsResponse~ daily_stats
+        +Dict recommendation
+        +Dict risk_category
+        +int overall_aqi
+        +datetime timestamp
+        +Dict metadata
+    }
+
+    class DashboardResponseBuilder {
+        -DashboardResponseSchema _response
+        +__init__()
+        +with_station(station) DashboardResponseBuilder
+        +with_current_readings(readings) DashboardResponseBuilder
+        +with_daily_stats(stats) DashboardResponseBuilder
+        +with_recommendation(recommendation) DashboardResponseBuilder
+        +with_risk_category(risk_category) DashboardResponseBuilder
+        +with_overall_aqi(aqi) DashboardResponseBuilder
+        +with_metadata(key, value) DashboardResponseBuilder
+        +build() DashboardResponseSchema
+    }
+
+    class StationResponse {
+        +int id
+        +str name
+        +float latitude
+        +float longitude
+    }
+
+    class CurrentReadingResponse {
+        +str pollutant_name
+        +float value
+        +int aqi
+        +datetime timestamp
+    }
+
+    class DailyStatsResponse {
+        +date date
+        +int avg_aqi
+        +int max_aqi
+        +int min_aqi
+    }
+
+    DashboardResponseBuilder ..> DashboardResponseSchema : builds
+    DashboardResponseSchema o-- StationResponse : contains
+    DashboardResponseSchema o-- CurrentReadingResponse : contains
+    DashboardResponseSchema o-- DailyStatsResponse : contains

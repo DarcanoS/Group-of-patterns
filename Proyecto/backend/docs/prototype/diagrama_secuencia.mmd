@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant Client as Cliente/Endpoint
+    participant Prototype as DashboardConfigPrototype
+    participant Config as DashboardConfig (Clon)
+    participant User as User Service
+
+    Note over Client,Prototype: Escenario 1: Clon basico
+    Client->>Prototype: clone()
+    activate Prototype
+    Prototype->>Config: copy.deepcopy(_config)
+    Config-->>Prototype: config_clone
+    Prototype-->>Client: Dict con configuracion clonada
+    deactivate Prototype
+
+    Note over Client,Prototype: Escenario 2: Clon personalizado para usuario
+    Client->>User: get_user_info(user_id=123)
+    User-->>Client: user_data (location="Bogota", theme="dark")
+
+    Client->>Prototype: clone_for_user(user_id=123, default_location="Bogota", theme="dark")
+    activate Prototype
+    Prototype->>Prototype: clone()
+    Note over Prototype: Crea copia profunda
+    Prototype->>Config: Personalizar clon
+    Note over Config: config["user_id"] = 123<br/>config["preferences"]["default_location"] = "Bogota"<br/>config["preferences"]["theme"] = "dark"
+    Prototype-->>Client: Dict con configuracion personalizada
+    deactivate Prototype
+
+    Note over Client,Prototype: Escenario 3: Configuracion minima (movil)
+    Client->>Prototype: get_minimal_config()
+    activate Prototype
+    Prototype->>Prototype: clone()
+    Prototype->>Config: Filtrar widgets esenciales
+    Note over Config: Solo widgets tipo:<br/>- aqi-display<br/>- recommendations
+    Prototype->>Config: config["layout"] = "minimal"
+    Prototype-->>Client: Dict con configuracion minima
+    deactivate Prototype
+

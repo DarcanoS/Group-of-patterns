@@ -1,0 +1,35 @@
+classDiagram
+    class DashboardConfigPrototype {
+        -Dict~str, Any~ _config
+        +__init__()
+        +clone() Dict~str, Any~
+        +clone_for_user(user_id: int, default_location: str, theme: str) Dict~str, Any~
+        +get_minimal_config() Dict~str, Any~
+    }
+
+    class DashboardConfig {
+        +str layout
+        +int refresh_interval
+        +List~Widget~ widgets
+        +Dict preferences
+        +int user_id
+    }
+
+    class Widget {
+        +str id
+        +str type
+        +Dict position
+        +Dict settings
+    }
+
+    class Preferences {
+        +str default_location
+        +List~str~ favorite_stations
+        +str theme
+    }
+
+    DashboardConfigPrototype ..> DashboardConfig : creates clone
+    DashboardConfig o-- Widget : contains
+    DashboardConfig o-- Preferences : contains
+
+    note for DashboardConfigPrototype "Prototype Pattern:\nProvee configuracion base\nque puede ser clonada y\npersonalizada para cada usuario"

@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant Client as Cliente/Endpoint
+    participant Factory as RecommendationFactory
+    participant Recommendation as BaseRecommendation
+    participant Product as ProductInfo
+
+    Client->>Factory: create_for_aqi(aqi=180, user_role="Citizen", location="Bogota")
+    activate Factory
+
+    Factory->>Factory: Evaluar AQI (180)
+    Note over Factory: AQI 151-200 = Unhealthy
+
+    Factory->>Factory: _create_unhealthy_recommendation(180, "Citizen", "Bogota")
+
+    Factory->>Product: new ProductInfo("N95 Respirator Mask")
+    Product-->>Factory: producto1
+
+    Factory->>Product: new ProductInfo("HEPA Air Purifier")
+    Product-->>Factory: producto2
+
+    Factory->>Product: new ProductInfo("Indoor Air Quality Monitor")
+    Product-->>Factory: producto3
+
+    Factory->>Recommendation: new BaseRecommendation(...)
+    Note over Recommendation: pollution_level=180<br/>message="Air quality is unhealthy"<br/>category="unhealthy"<br/>products=[producto1, producto2, producto3]<br/>actions=[...]
+
+    Recommendation-->>Factory: recommendation
+    Factory-->>Client: BaseRecommendation completa
+    deactivate Factory
+

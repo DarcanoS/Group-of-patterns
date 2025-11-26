@@ -1,0 +1,15 @@
+flowchart LR
+    A[Valor AQI] --> B{AQI <= 50?}
+    B -- Sí --> C[Categoría: Good\nMensaje: Salud normal]
+    B -- No --> D{AQI <= 100?}
+    D -- Sí --> E[Categoría: Moderate\nMensaje: Precaución]
+    D -- No --> F{AQI <= 150?}
+    F -- Sí --> G[Categoría: Unhealthy for Sensitive Groups]
+    F -- No --> H{AQI <= 200?}
+    H -- Sí --> I[Categoría: Unhealthy]
+    H -- No --> J[Categoría: Very Unhealthy / Hazardous]
+    C --> K[Fin]
+    E --> K
+    G --> K
+    I --> K
+    J --> K
