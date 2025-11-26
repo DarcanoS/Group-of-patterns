@@ -2,6 +2,30 @@
 
 Este documento describe cómo ejecutar PostgreSQL + PostGIS y MongoDB usando contenedores Podman para Air Quality Platform.
 
+## 📌 Importante: Configuración de Credenciales
+
+**Los contenedores leen la configuración del archivo `.env`** (NO `.env.containers`).
+
+- `.env.example` - Archivo plantilla con todas las variables
+- `.env.containers.example` - Misma plantilla (nombre alternativo)
+- `.env` - **TU configuración real** (gitignored, no se hace commit)
+
+### Pasos de Configuración:
+
+1. Copia el archivo de ejemplo:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edita con contraseñas seguras:
+   ```bash
+   nano .env
+   ```
+
+3. **NUNCA hagas commit de `.env`** - contiene credenciales sensibles
+
+---
+
 ## 📋 Requisitos Previos
 
 - **Podman** instalado en Ubuntu
@@ -37,17 +61,19 @@ sudo apt install podman-compose
 cd Proyecto/database/
 
 # Copiar el template de configuración
-cp .env.containers .env.containers.local
+cp .env.example .env
 
-# Editar con tus credenciales (IMPORTANTE en producción!)
-nano .env.containers.local
+# Editar con tus credenciales (¡IMPORTANTE en producción!)
+nano .env
 ```
+
+**IMPORTANTE**: Cambia TODAS las contraseñas en el archivo `.env` antes de usar en producción.
 
 ### 2. Iniciar Contenedores
 
 ```bash
 # Usando el script auxiliar (recomendado)
-./containers.sh start
+./containers.sh up podman
 
 # O manualmente con podman-compose
 podman-compose -f podman-compose.yml up -d

@@ -53,6 +53,37 @@ database/
 
 ## Quick Start
 
+### 🚀 Fastest Way: Using Containers
+
+```bash
+cd Proyecto/database
+
+# 1. Configure your credentials
+cp .env.example .env
+nano .env  # Edit with your secure passwords
+
+# 2. Start containers
+./containers.sh up podman
+
+# 3. Verify everything works
+./containers.sh health podman
+```
+
+**See detailed container documentation**: [CONTAINERS.md](CONTAINERS.md)
+
+### 🔄 Need to Reset Everything?
+
+If you need to recreate containers with new credentials:
+
+```bash
+# Option 1: Automated reset
+./reset_containers.sh podman
+
+# Option 2: Manual cleanup
+./containers.sh clean podman
+./containers.sh up podman
+```
+
 ## Folder Structure
 
 ```text

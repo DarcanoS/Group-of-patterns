@@ -76,11 +76,12 @@ detect_engine() {
 
 # Load environment variables
 load_env() {
-    if [ -f "$SCRIPT_DIR/.env.containers" ]; then
-        export $(grep -v '^#' "$SCRIPT_DIR/.env.containers" | xargs)
-        print_success "Loaded .env.containers"
+    if [ -f "$SCRIPT_DIR/.env" ]; then
+        export $(grep -v '^#' "$SCRIPT_DIR/.env" | xargs)
+        print_success "Loaded .env configuration"
     else
-        print_warning ".env.containers not found, using defaults"
+        print_warning ".env not found, using defaults from compose file"
+        print_warning "Copy .env.containers.example to .env and customize it"
     fi
 }
 
