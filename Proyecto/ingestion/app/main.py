@@ -68,13 +68,49 @@ def run_historical_ingestion():
 
 def run_realtime_ingestion():
     """
-    Run periodic real-time data ingestion from AQICN API.
+    Run one-time real-time data ingestion from AQICN API.
     
-    NOT IMPLEMENTED YET - This will be added in a future iteration.
+    This function:
+    1. Tests database connectivity
+    2. Creates ingestion service with AQICN adapter
+    3. Fetches current air quality data from AQICN
+    4. Inserts readings into PostgreSQL
     """
-    logger.error("Real-time ingestion not implemented yet")
-    logger.info("This feature will fetch data from AQICN API every N minutes")
-    return 1
+    logger.info("=" * 70)
+    logger.info("AIR QUALITY PLATFORM - REAL-TIME DATA INGESTION (AQICN)")
+    logger.info("=" * 70)
+    
+    # Test database connection
+    logger.info("\n[1/3] Testing database connection...")
+    if not test_connection():
+        logger.error("Database connection failed. Exiting.")
+        sys.exit(1)
+    
+    # Create database session
+    logger.info("\n[2/3] Initializing ingestion service...")
+    db = next(get_db())
+    
+    try:
+        service = IngestionService(db)
+        service.preload_caches()
+        
+        # Run AQICN ingestion
+        logger.info("\n[3/3] Running real-time data ingestion from AQICN API...")
+        stats = service.run_aqicn_ingestion()
+        
+        # Success
+        logger.info("\n" + "✓" * 70)
+        logger.info("Real-time ingestion completed successfully!")
+        logger.info("✓" * 70)
+        
+        return 0
+        
+    except Exception as e:
+        logger.error(f"\n✗ Real-time ingestion failed: {e}", exc_info=True)
+        return 1
+        
+    finally:
+        db.close()
 
 
 def main():

@@ -342,3 +342,95 @@ class IngestionService:
             self.station_cache[s.name] = s.id
         
         logger.info(f"Preloaded {len(stations)} stations into cache")
+    
+    def run_aqicn_ingestion(self) -> Dict:
+        """
+        Run real-time ingestion from AQICN API.
+        
+        Fetches current air quality data from AQICN for stations that are
+        already in our database, using their coordinates to query the API.
+        
+        Returns:
+            Statistics dictionary with counts
+        """
+        from app.providers.aqicn_adapter import AqicnApiAdapter
+        
+        logger.info("=" * 70)
+        logger.info("AQICN API INGESTION - UPDATE EXISTING STATIONS")
+        logger.info("=" * 70)
+        
+        # Initialize AQICN adapter
+        if not settings.aqicn_api_key:
+            raise ValueError("AQICN_API_KEY not configured in environment")
+        
+        adapter = AqicnApiAdapter(
+            api_key=settings.aqicn_api_key,
+            base_url=settings.aqicn_base_url
+        )
+        
+        # Get all stations from database
+        logger.info("\n[1/4] Loading existing stations from database...")
+        stations = self.db.query(Station).all()
+        
+        if not stations:
+            logger.warning("No stations found in database!")
+            return {
+                'total_fetched': 0,
+                'inserted': 0,
+                'skipped': 0
+            }
+        
+        logger.info(f"✓ Found {len(stations)} stations in database")
+        
+        # Prepare coordinates for each station
+        coordinates = []
+        station_info = {}
+        
+        for station in stations:
+            if station.latitude and station.longitude:
+                coord_tuple = (station.latitude, station.longitude)
+                coordinates.append(coord_tuple)
+                station_info[coord_tuple] = {
+                    'id': station.id,
+                    'name': station.name,
+                    'city': station.city
+                }
+        
+        logger.info(f"   Stations with valid coordinates: {len(coordinates)}")
+        
+        for coord in coordinates:
+            info = station_info[coord]
+            logger.info(f"   • {info['name']} ({info['city']}): {coord[0]:.4f}, {coord[1]:.4f}")
+        
+        # Fetch readings from AQICN for each station's coordinates
+        logger.info("\n[2/4] Fetching current data from AQICN API...")
+        
+        readings = adapter.fetch_readings(coordinates=coordinates)
+        
+        logger.info(f"✓ Fetched {len(readings)} readings from AQICN")
+        logger.info(f"✓ Fetched {len(readings)} readings from AQICN")
+        
+        # Persist to database
+        logger.info("\n[3/4] Persisting readings to database...")
+        result = self._persist_readings(readings)
+        
+        # Commit transaction
+        logger.info("\n[4/4] Committing transaction...")
+        self.db.commit()
+        
+        # Log summary
+        logger.info("\n" + "=" * 70)
+        logger.info("INGESTION SUMMARY")
+        logger.info("=" * 70)
+        logger.info(f"  Stations queried:       {len(coordinates)}")
+        logger.info(f"  Total readings fetched: {len(readings)}")
+        logger.info(f"  Inserted:               {result['inserted']}")
+        logger.info(f"  Skipped (duplicates):   {result['skipped']}")
+        logger.info("=" * 70)
+        
+        return {
+            'stations_queried': len(coordinates),
+            'total_fetched': len(readings),
+            'inserted': result['inserted'],
+            'skipped': result['skipped']
+        }

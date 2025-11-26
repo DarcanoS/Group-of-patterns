@@ -44,14 +44,22 @@ class Settings(BaseSettings):
     # External API Providers
     # ========================================================================
     
-    aqicn_token: str = Field(
-        default="demo",
+    # AQICN API Configuration
+    aqicn_api_key: Optional[str] = Field(
+        default=None,
+        alias="TOKEN_API_AQICN",
         description="AQICN API token (get from https://aqicn.org/data-platform/token/)"
     )
     
     aqicn_base_url: str = Field(
         default="https://api.waqi.info",
         description="AQICN API base URL"
+    )
+    
+    aqicn_cities: Optional[str] = Field(
+        default="bogota",
+        alias="AQICN_CITIES",
+        description="Comma-separated list of cities to query (e.g., 'bogota,medellin,cali')"
     )
     
     # ========================================================================
