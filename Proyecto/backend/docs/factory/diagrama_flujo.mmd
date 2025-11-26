@@ -1,0 +1,56 @@
+flowchart TD
+    A[Inicio: create_for_aqi] --> B[Recibir AQI, user_role, location]
+    B --> C{AQI <= 50?}
+
+    C -->|Si| D[_create_good_recommendation]
+    C -->|No| E{AQI <= 100?}
+
+    E -->|Si| F[_create_moderate_recommendation]
+    E -->|No| G{AQI <= 150?}
+
+    G -->|Si| H[_create_unhealthy_sensitive_recommendation]
+    G -->|No| I{AQI <= 200?}
+
+    I -->|Si| J[_create_unhealthy_recommendation]
+    I -->|No| K{AQI <= 300?}
+
+    K -->|Si| L[_create_very_unhealthy_recommendation]
+    K -->|No| M[_create_hazardous_recommendation]
+
+    D --> N[Crear mensaje basico]
+    F --> N
+    H --> O[Crear mensaje + productos basicos]
+    J --> P[Crear mensaje + productos importantes]
+    L --> Q[Crear mensaje + productos criticos]
+    M --> R[Crear mensaje EMERGENCIA + productos profesionales]
+
+    N --> S{user_role == Researcher?}
+    O --> S
+    P --> S
+    Q --> T{user_role == Admin?}
+    R --> T
+
+    S -->|Si| U[Agregar contexto tecnico]
+    S -->|No| V[Mantener mensaje]
+
+    T -->|Si| W[Agregar alerta administrativa]
+    T -->|No| V
+
+    U --> X[Crear lista de acciones]
+    V --> X
+    W --> X
+
+    X --> Y[Instanciar BaseRecommendation]
+    Y --> Z[Retornar recomendacion completa]
+    Z --> AA[Fin]
+
+    style A fill:#e1f5ff
+    style D fill:#90EE90
+    style F fill:#FFFF99
+    style H fill:#FFB347
+    style J fill:#FF6B6B
+    style L fill:#CC6699
+    style M fill:#8B0000,color:#fff
+    style Z fill:#e1ffe1
+    style AA fill:#e1f5ff
+

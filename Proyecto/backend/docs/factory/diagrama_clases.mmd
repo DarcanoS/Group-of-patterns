@@ -1,0 +1,27 @@
+classDiagram
+    class BaseRecommendation {
+        +int pollution_level
+        +str message
+        +str category
+        +List~ProductInfo~ products
+        +List~str~ actions
+    }
+
+    class ProductInfo {
+        +str name
+        +str type
+        +str url
+    }
+
+    class RecommendationFactory {
+        +create_for_aqi(aqi: int, user_role: str, location: str) BaseRecommendation
+        -_create_good_recommendation(aqi, user_role, location) BaseRecommendation
+        -_create_moderate_recommendation(aqi, user_role, location) BaseRecommendation
+        -_create_unhealthy_sensitive_recommendation(aqi, user_role, location) BaseRecommendation
+        -_create_unhealthy_recommendation(aqi, user_role, location) BaseRecommendation
+        -_create_very_unhealthy_recommendation(aqi, user_role, location) BaseRecommendation
+        -_create_hazardous_recommendation(aqi, user_role, location) BaseRecommendation
+    }
+
+    RecommendationFactory ..> BaseRecommendation : creates
+    BaseRecommendation o-- ProductInfo : contains

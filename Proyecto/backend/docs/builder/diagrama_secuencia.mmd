@@ -1,0 +1,50 @@
+sequenceDiagram
+    participant Client as Cliente/Endpoint
+    participant Builder as DashboardResponseBuilder
+    participant Response as DashboardResponseSchema
+    participant StationRepo as StationRepository
+    participant AQRepo as AirQualityRepository
+    participant RecService as RecommendationService
+    participant RiskService as RiskCategoryService
+
+    Client->>Builder: new DashboardResponseBuilder()
+    activate Builder
+    Builder->>Response: create empty response
+
+    Client->>StationRepo: get_station(station_id)
+    StationRepo-->>Client: station_data
+    Client->>Builder: with_station(station_data)
+    Builder->>Response: set station
+    Builder-->>Client: self
+
+    Client->>AQRepo: get_current_readings(station_id)
+    AQRepo-->>Client: readings
+    Client->>Builder: with_current_readings(readings)
+    Builder->>Response: set current_readings
+    Builder->>Response: calculate overall_aqi
+    Builder-->>Client: self
+
+    Client->>AQRepo: get_daily_stats(station_id, date_range)
+    AQRepo-->>Client: stats
+    Client->>Builder: with_daily_stats(stats)
+    Builder->>Response: set daily_stats
+    Builder-->>Client: self
+
+    Client->>RecService: get_recommendation(aqi)
+    RecService-->>Client: recommendation
+    Client->>Builder: with_recommendation(recommendation)
+    Builder->>Response: set recommendation
+    Builder-->>Client: self
+
+    Client->>RiskService: get_category(aqi)
+    RiskService-->>Client: risk_category
+    Client->>Builder: with_risk_category(risk_category)
+    Builder->>Response: set risk_category
+    Builder-->>Client: self
+
+    Client->>Builder: build()
+    Builder->>Response: update timestamp
+    Builder->>Response: validate data
+    Builder-->>Client: complete DashboardResponseSchema
+    deactivate Builder
+

@@ -1,0 +1,46 @@
+flowchart TD
+    A[Inicio: Crear Builder] --> B[Nuevo DashboardResponseBuilder]
+    B --> C[Respuesta vacia inicializada]
+
+    C --> D{"Agregar estacion?"}
+    D -->|Si| E[with_station]
+    D -->|No| F{"Agregar lecturas?"}
+
+    E --> F
+    F -->|Si| G[with_current_readings]
+    F -->|No| H{"Agregar estadisticas?"}
+
+    G --> G1[Calcular AQI maximo]
+    G1 --> H
+
+    H -->|Si| I[with_daily_stats]
+    H -->|No| J{"Agregar recomendacion?"}
+
+    I --> J
+    J -->|Si| K[with_recommendation]
+    J -->|No| L{"Agregar categoria de riesgo?"}
+
+    K --> L
+    L -->|Si| M[with_risk_category]
+    L -->|No| N{"Agregar metadata?"}
+
+    M --> N
+    N -->|Si| O[with_metadata]
+    N -->|No| P[build]
+
+    O --> N
+
+    P --> Q[Actualizar timestamp]
+    Q --> R{"Tiene datos minimos?"}
+    R -->|No| S[Agregar advertencia en metadata]
+    R -->|Si| T[Retornar respuesta completa]
+    S --> T
+
+    T --> U[Fin]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style P fill:#ffe1e1
+    style T fill:#e1ffe1
+    style U fill:#e1f5ff
+
