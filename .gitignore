@@ -78,3 +78,11 @@ Thumbs.db
 #Archivos antiguos
 Poster/imgs/modelo
 Poster/imgs/caso
+
+# Scripts de sincronización entre repositorios
+sync_to_database_repo.sh
+SYNC_WORKFLOW.md
+
+# GitHub configuration
+.github/
+data_air/
