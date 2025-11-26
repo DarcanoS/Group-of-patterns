@@ -6,20 +6,12 @@ This folder contains database schema, setup scripts and configuration for the Ai
 
 The platform uses a **hybrid database architecture**:
 
-- **PostgreSQL + PostGIS**: Relational database for core operational data
-- **MongoDB**: NoSQL database for user preferences and dashboard configurations
 
 ## Prerequisites
 
 ### Option 1: Using Containers (Recommended)
-- **Podman** or **Docker** installed
-- See [CONTAINERS.md](CONTAINERS.md) for complete container setup
 
 ### Option 2: Local Installation
-- **PostgreSQL 14+** installed
-- **PostGIS** extension available
-- Database created (e.g., `air_quality_db`)
-- Database user with appropriate permissions
 
 ## 📁 Folder Structure
 
@@ -61,12 +53,44 @@ database/
 
 ## Quick Start
 
+## Folder Structure
+
+```text
+.env                # Database environment variables (PostgreSQL, MongoDB)
+.env.example        # Example env file for local setup
+.env.containers     # Container environment variables (Podman/Docker)
+README.md           # Main database documentation
+CONTAINERS.md       # Container setup and usage guide (Podman & Docker)
+db_helper.sh        # Helper script for DB operations
+podman-compose.yml  # Podman Compose file for containers
+docker-compose.yml  # Docker Compose file (NEW, see below)
+containers.sh       # Container management script (Podman & Docker)
+
+postgresql/         # PostgreSQL schema, seed, permissions
+  init_schema.sql   # Main schema
+  seed_data.sql     # Initial data
+  setup_users_permissions.sql # User/role setup
+  README.md         # PostgreSQL usage
+
+mongodb/            # MongoDB initialization and indexes
+  mongo_init.js     # Init script
+  mongo_indexes.js  # Indexes
+  README.md         # MongoDB usage
+
+scripts/            # Python utilities
+  load_seed_data.py # Seed loader
+  verify_ingestion.py # Data verification
+  mongo_python_examples.py # MongoDB Python usage
+  README.md         # Scripts usage
+
+docs/               # Documentation (only essentials)
+  MONGODB_SETUP.md  # MongoDB setup guide
+  README.md         # Docs index
+```
+
+> Only keep files strictly needed for DB structure, initialization, and container setup. Remove ingestion summaries and temporary files from repo.
 > **🐳 Using Containers?** See [CONTAINERS.md](CONTAINERS.md) for Podman/Docker setup (recommended for development and production).
 
-### 0. Setup Environment Variables (FIRST!)
-
-```bash
-# Copy the example file
 cd Proyecto/database/
 cp .env.example .env
 

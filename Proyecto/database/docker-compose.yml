@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: air_quality_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: air_quality_db
+      POSTGRES_USER: air_quality_admin
+      POSTGRES_PASSWORD: change_this_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql:ro
+      - ./postgresql/seed_data.sql:/docker-entrypoint-initdb.d/02_seed_data.sql:ro
+      - ./postgresql/setup_users_permissions.sql:/docker-entrypoint-initdb.d/03_setup_users_permissions.sql:ro
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U air_quality_admin -d air_quality_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:7.0
+    container_name: air_quality_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: air_quality_nosql
+      MONGO_INITDB_ROOT_USERNAME: mongo_admin
+      MONGO_INITDB_ROOT_PASSWORD: change_this_password
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb/mongo_init.js:/docker-entrypoint-initdb.d/mongo_init.js:ro
+      - ./mongodb/mongo_indexes.js:/docker-entrypoint-initdb.d/mongo_indexes.js:ro
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:
+  mongo_data:

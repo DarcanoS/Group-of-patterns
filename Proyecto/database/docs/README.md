@@ -37,22 +37,6 @@ Complete MongoDB setup and usage guide.
 
 **Audience**: Developers setting up MongoDB for the first time
 
-### `INGESTION_SUMMARY.md`
-Summary of historical data ingestion process.
-
-**Purpose**:
-- Document the ingestion service implementation
-- Record ingestion statistics
-- Track Git Flow branches used
-
-**Contents**:
-- Git Flow branches summary
-- Seed data statistics
-- Ingestion results (79,539 readings)
-- Station-wise breakdown
-- Implementation notes
-
-**Audience**: Team members reviewing project progress
 
 ## How to Use This Documentation
 
@@ -60,7 +44,6 @@ Summary of historical data ingestion process.
 1. Read parent `README.md` for overview
 2. Follow `COPILOT_DATABASE_V2.md` for schema understanding
 3. Use `MONGODB_SETUP.md` for NoSQL setup
-4. Check `INGESTION_SUMMARY.md` for expected data volumes
 
 ### For Development
 1. Reference `COPILOT_DATABASE_V2.md` for schema changes
@@ -69,8 +52,7 @@ Summary of historical data ingestion process.
 
 ### For Troubleshooting
 1. Verify setup followed `MONGODB_SETUP.md` steps
-2. Check `INGESTION_SUMMARY.md` for expected data ranges
-3. Review parent `README.md` for common issues
+2. Review parent `README.md` for common issues
 
 ## Documentation Standards
 

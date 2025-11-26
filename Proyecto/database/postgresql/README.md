@@ -21,10 +21,6 @@ cd Proyecto/database
 
 ### `setup_users_permissions.sql`
 Grants appropriate permissions to the application user (`air_quality_app`).
-
-**Run order**: Second (after init_schema.sql)
-
-**Permissions granted**:
 - SELECT only on reference tables (roles, permissions, pollutants, stations)
 - SELECT + INSERT on data ingestion tables (readings, recommendations, reports)
 - SELECT + INSERT + UPDATE on user management and statistics
@@ -40,10 +36,6 @@ Populates initial reference data:
 - Pollutants (PM2.5, PM10, O3, NO2, SO2, CO)
 - Roles (Citizen, Researcher, Admin)
 - Permissions and role-permission mappings
-- Map regions (Bogotá Metropolitan Area)
-- Stations (5 monitoring stations in Bogotá)
-- Demo users (one per role)
-
 **Run order**: Third (after schema and permissions)
 
 **Usage**:
@@ -52,12 +44,6 @@ Populates initial reference data:
 ```
 
 Or use the Python loader:
-```bash
-cd Proyecto/database
-python scripts/load_seed_data.py
-```
-
-## Execution Order
 
 Always run scripts in this order:
 
@@ -82,33 +68,36 @@ The schema follows the DBML model defined in `docs/COPILOT_DATABASE_V2.md` and i
 - `role_permission` - Role-permission mappings
 - `app_user` - Application users
 
-### Alerts & Personalization
-- `alert` - User pollution alerts
-- `recommendation` - Health recommendations
-- `product_recommendation` - Product suggestions
 
-### Reporting
-- `report` - Report metadata
+# PostgreSQL + PostGIS - Air Quality Platform
 
-## Verification
+This folder contains scripts to create and populate the main relational database for the project.
 
-After running all scripts, verify the setup:
+## Files
 
-```bash
-# Connect as admin
-./db_helper.sh admin
+- `init_schema.sql`: Creates all tables, indexes, and constraints
+- `setup_users_permissions.sql`: Sets up users and permissions
+- `seed_data.sql`: Inserts initial data (pollutants, roles, stations, demo users)
 
-# Inside psql:
-\dt              -- List all tables
-\du              -- List all users
-SELECT COUNT(*) FROM pollutant;  -- Should return 6
-SELECT COUNT(*) FROM station;    -- Should return 5
-SELECT COUNT(*) FROM role;       -- Should return 3
-```
+## Usage
+
+1. Start the PostgreSQL container (see `../CONTAINERS.md`)
+2. Connect to the container:
+	```bash
+	podman exec -it air_quality_postgres psql -U air_quality_admin -d air_quality_db
+	# o
+	docker exec -it air_quality_postgres psql -U air_quality_admin -d air_quality_db
+	```
+3. Scripts are executed automatically on container creation. To run manually:
+	```sql
+	\i /docker-entrypoint-initdb.d/01_init_schema.sql
+	\i /docker-entrypoint-initdb.d/02_setup_users_permissions.sql
+	\i /docker-entrypoint-initdb.d/03_seed_data.sql
+	```
 
 ## Notes
 
-- All scripts use `GENERATED ALWAYS AS IDENTITY` for primary keys (modern standard)
-- Timestamps use `timestamp with time zone` for proper timezone handling
-- Foreign key constraints use CASCADE, RESTRICT, or SET NULL appropriately
-- Comprehensive indexing for performance
+- Scripts are prepared for automatic execution when the container is created.
+- To reinitialize, remove the volume and restart the container.
+- Do not include ingestion or temporary files in this folder.
+\du              -- List all users
