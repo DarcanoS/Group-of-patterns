@@ -74,7 +74,7 @@ sudo cp -r /opt/air-quality-ingestion /opt/air-quality-ingestion-backup-$(date +
 
 # 3. Clonar repo actualizado
 cd /tmp
-git clone -b develop https://github.com/DarcanoS/Group_of_patterns.git
+git clone -b develop https://github.com/DarcanoS/Group-of-patterns.git
 cd Group_of_patterns/Proyecto/ingestion
 
 # 4. Copiar código nuevo (preservando .env y venv)

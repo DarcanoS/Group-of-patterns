@@ -23,7 +23,7 @@ NC='\033[0m' # No Color
 
 # Default values
 INSTALL_DIR="/opt/air-quality-ingestion"
-REPO_URL="https://github.com/DarcanoS/Group_of_patterns.git"
+REPO_URL="https://github.com/DarcanoS/Group-of-patterns.git"
 BRANCH="develop"
 SKIP_DEPS=false
 BACKUP_DIR="/opt/air-quality-ingestion-backups"
