@@ -33,17 +33,6 @@
         </ul>
       </div>
 
-      <!-- PRODUCT SUGGESTIONS -->
-      <div class="card">
-        <h2>Sugerencias </h2>
-        <ul>
-          <li v-for="product in data.products" :key="product.name">
-            <strong>{{ product.name }}</strong>
-            <p class="product-desc">{{ product.description }}</p>
-          </li>
-        </ul>
-      </div>
-
       <!-- HISTORICAL CHART -->
       <div class="card chart-card">
         <h2>Historico de 7 dias </h2>
