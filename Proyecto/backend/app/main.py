@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.logging_config import logger
 from app.api.v1.router import api_router
+from app.db.mongodb import MongoDB
 
 # Create FastAPI application
 app = FastAPI(
@@ -35,20 +36,29 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 async def startup_event():
     """
     Startup event handler.
-    Logs application startup.
+    Logs application startup and initializes database connections.
     """
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.VERSION}")
     logger.info(f"API available at {settings.API_V1_STR}")
     logger.info(f"Documentation available at {settings.API_V1_STR}/docs")
+
+    # Initialize MongoDB connection
+    try:
+        await MongoDB.connect()
+    except Exception as e:
+        logger.warning(f"MongoDB connection failed (continuing without it): {e}")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """
     Shutdown event handler.
-    Logs application shutdown.
+    Logs application shutdown and closes database connections.
     """
     logger.info(f"Shutting down {settings.PROJECT_NAME}")
+
+    # Close MongoDB connection
+    await MongoDB.disconnect()
 
 
 @app.get("/")
