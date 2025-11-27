@@ -50,20 +50,4 @@ export async function updateUserRole(userId: number, roleId: number): Promise<Us
   return await httpClient.put<User>(`/admin/users/${userId}/role`, { role_id: roleId });
 }
 
-// Crear estación (por si lo necesitas después)
-export async function createStation(data: {
-  name: string;
-  latitude: number;
-  longitude: number;
-  city: string;
-  country: string;
-  region_id: number;
-}): Promise<Station> {
-  return await httpClient.post<Station>('/admin/stations', data);
-}
-
-// Eliminar estación
-export async function deleteStation(stationId: number): Promise<void> {
-  return await httpClient.delete<void>(`/admin/stations/${stationId}`);
-}
 
