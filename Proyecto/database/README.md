@@ -53,6 +53,7 @@ database/
 
 ## Quick Start
 
+
 ### 🚀 Fastest Way: Using Containers
 
 ```bash
@@ -70,6 +71,29 @@ nano .env  # Edit with your secure passwords
 ```
 
 **See detailed container documentation**: [CONTAINERS.md](CONTAINERS.md)
+
+### 🟢 Database Initialization Flow (Recommended)
+
+1. **Create schema (tables, indexes, etc.):**
+  ```bash
+  ./db_helper.sh run-admin postgresql/init_schema.sql
+  ```
+2. **Insert initial reference data (pollutants, roles, stations, etc.):**
+  ```bash
+  ./db_helper.sh run-admin postgresql/seed_data.sql
+  ```
+3. **Create users and assign permissions:**
+  - If not created, connect as superuser and run:
+    ```sql
+    CREATE USER air_quality_admin WITH PASSWORD 'admin_secure_password';
+    CREATE USER air_quality_app WITH PASSWORD 'app_secure_password';
+    ```
+  - Then assign permissions:
+    ```bash
+    ./db_helper.sh run-admin postgresql/setup_users_permissions.sql
+    ```
+
+**Important:** Si ejecutas el script de permisos antes de crear el usuario `air_quality_app`, verás errores de "role does not exist". Primero crea el usuario.
 
 ### 🔄 Need to Reset Everything?
 
@@ -314,6 +338,26 @@ After running `postgresql/init_schema.sql`, you should:
 4. (Optional) Set up MongoDB using `docs/MONGODB_SETUP.md`
 
 ## Troubleshooting
+
+
+### Common Errors & Solutions
+
+#### "role 'air_quality_app' does not exist"
+Si ves este error al ejecutar el script de permisos, significa que el usuario no ha sido creado. Solución:
+
+1. Conéctate como superusuario o admin y ejecuta:
+   ```sql
+   CREATE USER air_quality_app WITH PASSWORD 'app_secure_password';
+   ```
+2. Vuelve a ejecutar el script de permisos.
+
+#### "column 'sequence_name' does not exist"
+Este error ocurre si la consulta sobre secuencias en el script usa un nombre de columna incorrecto. Debes consultar así:
+
+```sql
+SELECT sequence_name FROM information_schema.sequences WHERE sequence_schema = 'public';
+```
+Corrige el script para usar el nombre y esquema correctos.
 
 ### PostGIS Not Available
 

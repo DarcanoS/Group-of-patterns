@@ -76,14 +76,11 @@ WHERE grantee = 'air_quality_app'
 GROUP BY grantee, table_name
 ORDER BY table_name;
 
--- Verify sequence permissions
 SELECT 
   sequence_name,
   privilege_type
-FROM information_schema.usage_privileges
-WHERE grantee = 'air_quality_app'
-  AND object_schema = 'public'
-ORDER BY sequence_name;
+ FROM information_schema.sequences
+ WHERE sequence_schema = 'public';
 
 -- ============================================================================
 -- NOTES
