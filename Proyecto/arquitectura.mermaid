@@ -1,0 +1,150 @@
+graph TB
+    subgraph "External Layer"
+        API1[External Air Quality APIs]
+        Users[Users: Citizens/Researchers/Admins]
+    end
+
+    subgraph "Frontend Layer - Vue 3"
+        FE[Vue 3 Application]
+        LandingPage[Landing Page]
+        LoginView[Login View]
+        CitizenDash[Citizen Dashboard]
+        ResearcherDash[Researcher Dashboard]
+        AdminDash[Admin Dashboard]
+        SettingsView[Settings View]
+    end
+
+    subgraph "Backend Layer - FastAPI"
+        BE[FastAPI REST API]
+        
+        subgraph "API Endpoints"
+            AuthAPI[Auth Endpoints]
+            AirQualityAPI[Air Quality Endpoints]
+            StationsAPI[Stations Endpoints]
+            RecommendationsAPI[Recommendations Endpoints]
+            AdminAPI[Admin Endpoints]
+            SettingsAPI[Settings Endpoints]
+            ReportsAPI[Reports Endpoints]
+        end
+        
+        subgraph "Services - Design Patterns"
+            Factory[Factory Pattern<br/>Recommendation Factory]
+            Builder[Builder Pattern<br/>Dashboard Builder]
+            Strategy[Strategy Pattern<br/>Risk Category]
+            Prototype[Prototype Pattern<br/>Default Config]
+        end
+        
+        subgraph "Repositories"
+            StationRepo[Station Repository]
+            UserRepo[User Repository]
+            AirQualityRepo[Air Quality Repository]
+            ReportRepo[Report Repository]
+        end
+    end
+
+    subgraph "Ingestion Layer - Python"
+        IngestionService[Ingestion Service]
+        Adapter1[Adapter Pattern<br/>API Provider 1]
+        Adapter2[Adapter Pattern<br/>API Provider 2]
+        Adapter3[Adapter Pattern<br/>API Provider N]
+        Normalizer[Data Normalizer]
+    end
+
+    subgraph "Data Layer"
+        subgraph "PostgreSQL + PostGIS"
+            Station[(Station)]
+            AQReading[(Air Quality Reading)]
+            Pollutant[(Pollutant)]
+            AppUser[(App User)]
+            Role[(Role & Permission)]
+            Alert[(Alert)]
+            Recommendation[(Recommendation)]
+            Report[(Report)]
+            DailyStats[(Daily Stats)]
+            MapRegion[(Map Region)]
+        end
+        
+        subgraph "MongoDB - NoSQL"
+            UserPrefs[(User Preferences)]
+            DashConfig[(Dashboard Configs)]
+        end
+    end
+
+    %% User interactions
+    Users -->|HTTP/HTTPS| FE
+    FE --> LandingPage
+    FE --> LoginView
+    FE --> CitizenDash
+    FE --> ResearcherDash
+    FE --> AdminDash
+    FE --> SettingsView
+
+    %% Frontend to Backend
+    FE -->|REST API| BE
+
+    %% Backend to Services
+    BE --> AuthAPI
+    BE --> AirQualityAPI
+    BE --> StationsAPI
+    BE --> RecommendationsAPI
+    BE --> AdminAPI
+    BE --> SettingsAPI
+    BE --> ReportsAPI
+
+    %% Services use patterns
+    RecommendationsAPI --> Factory
+    AirQualityAPI --> Builder
+    AirQualityAPI --> Strategy
+    SettingsAPI --> Prototype
+
+    %% API to Repositories
+    AuthAPI --> UserRepo
+    AirQualityAPI --> AirQualityRepo
+    StationsAPI --> StationRepo
+    ReportsAPI --> ReportRepo
+    AdminAPI --> UserRepo
+    AdminAPI --> StationRepo
+
+    %% Repositories to DB
+    StationRepo --> Station
+    UserRepo --> AppUser
+    UserRepo --> Role
+    AirQualityRepo --> AQReading
+    AirQualityRepo --> DailyStats
+    AirQualityRepo --> Pollutant
+    ReportRepo --> Report
+    
+    %% Settings to NoSQL
+    SettingsAPI --> UserPrefs
+    SettingsAPI --> DashConfig
+
+    %% Ingestion flow
+    API1 -->|JSON/XML| Adapter1
+    API1 -->|JSON/XML| Adapter2
+    API1 -->|JSON/XML| Adapter3
+    Adapter1 --> IngestionService
+    Adapter2 --> IngestionService
+    Adapter3 --> IngestionService
+    IngestionService --> Normalizer
+    Normalizer -->|Persist| AQReading
+    Normalizer -->|Aggregate| DailyStats
+    
+    %% Additional relationships
+    RecommendationsAPI --> Recommendation
+    AdminAPI --> Alert
+    Station --> MapRegion
+    AQReading --> Station
+    AQReading --> Pollutant
+
+    %% Styling
+    classDef frontend fill:#00897B,stroke:#004D40,color:#fff
+    classDef backend fill:#1E88E5,stroke:#0D47A1,color:#fff
+    classDef ingestion fill:#43A047,stroke:#1B5E20,color:#fff
+    classDef database fill:#273043,stroke:#121826,color:#F5F7FA
+    classDef pattern fill:#FFB300,stroke:#E65100,color:#000
+    
+    class FE,LandingPage,LoginView,CitizenDash,ResearcherDash,AdminDash,SettingsView frontend
+    class BE,AuthAPI,AirQualityAPI,StationsAPI,RecommendationsAPI,AdminAPI,SettingsAPI,ReportsAPI backend
+    class IngestionService,Adapter1,Adapter2,Adapter3,Normalizer ingestion
+    class Station,AQReading,Pollutant,AppUser,Role,Alert,Recommendation,Report,DailyStats,MapRegion,UserPrefs,DashConfig database
+    class Factory,Builder,Strategy,Prototype pattern
