@@ -145,18 +145,27 @@ class IngestionService:
         # Process each adapter
         for adapter in adapters:
             try:
-                logger.info(f"\nProcessing: {adapter}")
+                logger.info(f"\n{'='*70}")
+                logger.info(f"Processing: {adapter}")
+                logger.info('='*70)
                 
                 # Fetch normalized readings
                 readings = adapter.fetch_readings()
                 stats['readings_fetched'] += len(readings)
                 
-                logger.info(f"Fetched {len(readings)} readings")
+                logger.info(f"Fetched {len(readings)} readings from CSV")
                 
                 # Persist to database
+                logger.info("Persisting readings to database...")
                 result = self._persist_readings(readings)
                 stats['readings_inserted'] += result['inserted']
                 stats['readings_skipped'] += result['skipped']
+                
+                # Summary for this adapter
+                logger.info(f"\nAdapter Summary:")
+                logger.info(f"  Total fetched: {len(readings)}")
+                logger.info(f"  Inserted:      {result['inserted']}")
+                logger.info(f"  Skipped:       {result['skipped']}")
                 
                 stats['adapters_processed'] += 1
                 
@@ -223,6 +232,12 @@ class IngestionService:
                 
                 if existing:
                     # Skip duplicate
+                    logger.debug(
+                        f"⊘ DUPLICATE: {reading.station_name} | "
+                        f"{reading.pollutant_code} | "
+                        f"{reading.timestamp_utc.strftime('%Y-%m-%d %H:%M:%S')} | "
+                        f"Value: {reading.value:.2f} {reading.unit} | AQI: {reading.aqi}"
+                    )
                     result['skipped'] += 1
                     continue
                 
@@ -237,6 +252,14 @@ class IngestionService:
                 
                 self.db.add(db_reading)
                 result['inserted'] += 1
+                
+                # Log detailed information about inserted reading
+                logger.info(
+                    f"✓ INSERTED: {reading.station_name} | "
+                    f"{reading.pollutant_code} | "
+                    f"{reading.timestamp_utc.strftime('%Y-%m-%d %H:%M:%S')} | "
+                    f"Value: {reading.value:.2f} {reading.unit} | AQI: {reading.aqi}"
+                )
                 
             except Exception as e:
                 logger.error(f"Failed to persist reading: {e}")
@@ -418,7 +441,7 @@ class IngestionService:
         logger.info("\n[4/4] Committing transaction...")
         self.db.commit()
         
-        # Log summary
+        # Generate detailed summary by station
         logger.info("\n" + "=" * 70)
         logger.info("INGESTION SUMMARY")
         logger.info("=" * 70)
@@ -426,7 +449,36 @@ class IngestionService:
         logger.info(f"  Total readings fetched: {len(readings)}")
         logger.info(f"  Inserted:               {result['inserted']}")
         logger.info(f"  Skipped (duplicates):   {result['skipped']}")
-        logger.info("=" * 70)
+        
+        # Group readings by station for detailed summary
+        if readings:
+            logger.info("\n" + "-" * 70)
+            logger.info("READINGS BY STATION")
+            logger.info("-" * 70)
+            
+            # Group readings by station name
+            from collections import defaultdict
+            station_readings = defaultdict(list)
+            for reading in readings:
+                station_readings[reading.station_name].append(reading)
+            
+            for station_name, station_data in sorted(station_readings.items()):
+                # Get unique timestamp (should be the same for all readings from same station)
+                timestamp = station_data[0].timestamp_utc.strftime('%Y-%m-%d %H:%M:%S UTC')
+                
+                logger.info(f"\n  📍 {station_name} ({station_data[0].city})")
+                logger.info(f"     Timestamp: {timestamp}")
+                logger.info(f"     Pollutants ({len(station_data)}):")
+                
+                for reading in sorted(station_data, key=lambda x: x.pollutant_code):
+                    logger.info(
+                        f"       • {reading.pollutant_code:<6} = "
+                        f"{reading.value:>6.2f} {reading.unit:<6} "
+                        f"(AQI: {reading.aqi:>3})"
+                    )
+        
+        logger.info("\n" + "=" * 70)
+
         
         return {
             'stations_queried': len(coordinates),

@@ -32,7 +32,7 @@ Implement a client for the **AQICN / WAQI JSON API**:
     "status": "ok" | "error",
     "data": ...
   }
-````
+  ```
 
 * For simple tests you may support the public `demo` token, but clearly document that it only works for Shanghai and should never be used in production.
 

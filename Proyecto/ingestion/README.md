@@ -282,6 +282,44 @@ sudo nano /opt/air-quality-ingestion/.env
 
 ---
 
+## 🔄 Actualizar Código en Servidor
+
+Si ya tienes el servicio desplegado y quieres actualizar a la última versión:
+
+### Método 1: Script de Actualización (Recomendado)
+
+```bash
+# En tu servidor
+sudo ./deploy/update.sh
+
+# O actualizar desde otra rama
+sudo ./deploy/update.sh --branch main
+
+# O sin reinstalar dependencias (más rápido)
+sudo ./deploy/update.sh --skip-deps
+```
+
+### Método 2: Actualización Rápida (Una Línea)
+
+```bash
+# Descargar y ejecutar update desde GitHub
+curl -fsSL https://raw.githubusercontent.com/DarcanoS/Group_of_patterns/develop/Proyecto/ingestion/deploy/quick-update.sh | sudo bash
+```
+
+### ¿Qué hace el script de actualización?
+
+✅ Detiene el servicio temporalmente  
+✅ Crea backup automático del código actual  
+✅ Descarga la última versión del repositorio  
+✅ Actualiza el código en `/opt/air-quality-ingestion`  
+✅ Preserva tu archivo `.env`  
+✅ Actualiza dependencias Python  
+✅ Reinicia el servicio  
+
+📖 **[Ver Guía Completa de Actualización →](./docs/GUIA_ACTUALIZACION.md)**
+
+---
+
 ## 🔮 Trabajo Futuro
 
 - [x] ~~Implementar `AqicnAdapter` para API en tiempo real~~ ✅ **COMPLETADO**
