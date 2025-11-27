@@ -4,12 +4,12 @@ Uses Builder and Strategy patterns.
 """
 
 from typing import Optional, List
-from datetime import date
+from datetime import date, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.services.air_quality_service import AirQualityService
-from app.schemas.air_quality import CurrentAQIResponse, DailyStatsResponse
+from app.schemas.air_quality import CurrentAQIResponse, DailyStatsResponse, HistoricalDataResponse
 from app.services.dashboard_service import DashboardResponseSchema
 
 router = APIRouter()
@@ -93,4 +93,48 @@ def get_daily_stats(
     )
 
     return stats
+
+
+@router.get("/historical/7-days", response_model=HistoricalDataResponse)
+def get_7_day_historical_data(
+    station_id: int = Query(..., description="Station ID to get historical data for"),
+    end_date: Optional[date] = Query(None, description="End date (defaults to today)"),
+    db: Session = Depends(get_db)
+):
+    """
+    Get 7-day historical data for all pollutants at a specific station.
+
+    Returns daily average values for all pollutants in the same date range,
+    allowing for easy comparison in a single chart.
+
+    Args:
+        station_id: The station ID to get data for
+        end_date: The end date of the range (defaults to today)
+
+    Returns:
+        Historical data organized by pollutant with daily data points
+    """
+    air_quality_service = AirQualityService(db)
+
+    # Set end_date to today if not provided
+    if end_date is None:
+        end_date = date.today()
+
+    # Calculate start_date (7 days before end_date)
+    start_date = end_date - timedelta(days=6)
+
+    result = air_quality_service.get_7_day_historical_data(
+        station_id=station_id,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Station with ID {station_id} not found"
+        )
+
+    return result
+
 

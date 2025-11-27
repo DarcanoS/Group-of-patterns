@@ -78,3 +78,22 @@ class CurrentAQIResponse(BaseModel):
     timestamp: datetime
     station: Optional[StationResponse] = None
 
+
+class PollutantHistoricalData(BaseModel):
+    """Schema for historical data of a single pollutant."""
+    pollutant: PollutantResponse
+    data_points: List[dict]  # [{date: str, value: float, aqi: int}]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class HistoricalDataResponse(BaseModel):
+    """Schema for 7-day historical data response."""
+    station: StationResponse
+    start_date: date
+    end_date: date
+    pollutants_data: List[PollutantHistoricalData]
+
+    model_config = ConfigDict(from_attributes=True)
+
+

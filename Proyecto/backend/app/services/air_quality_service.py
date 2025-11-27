@@ -209,3 +209,48 @@ class AirQualityService:
 
         return [DailyStatsResponse.model_validate(s) for s in stats]
 
+    def get_7_day_historical_data(self, station_id: int, start_date: date, end_date: date):
+        """
+        Get 7-day historical data for all pollutants at a station.
+
+        Args:
+            station_id: Station ID
+            start_date: Start date for the range
+            end_date: End date for the range
+
+        Returns:
+            HistoricalDataResponse with data organized by pollutant
+        """
+        from app.schemas.air_quality import HistoricalDataResponse, PollutantHistoricalData
+        from app.schemas.pollutant import PollutantResponse
+
+        logger.info(f"Getting 7-day historical data for station {station_id} from {start_date} to {end_date}")
+
+        # Get station
+        station = self.station_repo.get_by_id(station_id)
+        if not station:
+            logger.warning(f"Station not found: {station_id}")
+            return None
+
+        # Get historical data
+        pollutants_data = self.air_quality_repo.get_historical_data_by_station(
+            station_id=station_id,
+            start_date=start_date,
+            end_date=end_date
+        )
+
+        # Convert to response schema
+        pollutants_list = []
+        for pollutant_id, data in pollutants_data.items():
+            pollutants_list.append(PollutantHistoricalData(
+                pollutant=PollutantResponse.model_validate(data['pollutant']),
+                data_points=data['data_points']
+            ))
+
+        return HistoricalDataResponse(
+            station=StationResponse.model_validate(station),
+            start_date=start_date,
+            end_date=end_date,
+            pollutants_data=pollutants_list
+        )
+

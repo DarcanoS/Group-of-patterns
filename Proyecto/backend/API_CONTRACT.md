@@ -386,6 +386,197 @@ curl "http://localhost:8000/api/v1/air-quality/daily-stats?station_id=1&start_da
 
 ---
 
+### 3.4 Get 7-Day Historical Data (Histórico 7 Días)
+**GET** `/api/v1/air-quality/historical/7-days` 🟢
+
+Obtiene datos históricos de 7 días para todos los contaminantes de una estación específica.
+Ideal para mostrar un gráfico comparativo con múltiples contaminantes en el mismo período.
+
+**Query Parameters:**
+| Parámetro | Tipo | Requerido | Descripción |
+|-----------|------|-----------|-------------|
+| station_id | int | **Sí** | ID de la estación |
+| end_date | date | No | Fecha final (YYYY-MM-DD, default: hoy) |
+
+**Response 200:**
+```json
+{
+  "station": {
+    "id": 1,
+    "name": "Downtown Station",
+    "city": "New York",
+    "country": "USA",
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  },
+  "start_date": "2025-11-20",
+  "end_date": "2025-11-27",
+  "pollutants_data": [
+    {
+      "pollutant": {
+        "id": 1,
+        "name": "PM2.5",
+        "unit": "µg/m³",
+        "description": "Fine particulate matter"
+      },
+      "data_points": [
+        {
+          "date": "2025-11-20",
+          "value": 32.5,
+          "aqi": 95
+        },
+        {
+          "date": "2025-11-21",
+          "value": 35.8,
+          "aqi": 101
+        },
+        {
+          "date": "2025-11-22",
+          "value": 28.3,
+          "aqi": 85
+        },
+        {
+          "date": "2025-11-23",
+          "value": 41.2,
+          "aqi": 115
+        },
+        {
+          "date": "2025-11-24",
+          "value": 38.7,
+          "aqi": 108
+        },
+        {
+          "date": "2025-11-25",
+          "value": 33.9,
+          "aqi": 97
+        },
+        {
+          "date": "2025-11-26",
+          "value": 36.4,
+          "aqi": 103
+        }
+      ]
+    },
+    {
+      "pollutant": {
+        "id": 2,
+        "name": "PM10",
+        "unit": "µg/m³",
+        "description": "Particulate matter"
+      },
+      "data_points": [
+        {
+          "date": "2025-11-20",
+          "value": 52.1,
+          "aqi": 72
+        },
+        {
+          "date": "2025-11-21",
+          "value": 58.4,
+          "aqi": 78
+        },
+        {
+          "date": "2025-11-22",
+          "value": 48.9,
+          "aqi": 68
+        },
+        {
+          "date": "2025-11-23",
+          "value": 65.2,
+          "aqi": 85
+        },
+        {
+          "date": "2025-11-24",
+          "value": 61.7,
+          "aqi": 82
+        },
+        {
+          "date": "2025-11-25",
+          "value": 54.3,
+          "aqi": 74
+        },
+        {
+          "date": "2025-11-26",
+          "value": 59.8,
+          "aqi": 80
+        }
+      ]
+    },
+    {
+      "pollutant": {
+        "id": 3,
+        "name": "O3",
+        "unit": "ppm",
+        "description": "Ozone"
+      },
+      "data_points": [
+        {
+          "date": "2025-11-20",
+          "value": 0.045,
+          "aqi": 55
+        },
+        {
+          "date": "2025-11-21",
+          "value": 0.052,
+          "aqi": 62
+        },
+        {
+          "date": "2025-11-22",
+          "value": 0.041,
+          "aqi": 51
+        },
+        {
+          "date": "2025-11-23",
+          "value": 0.058,
+          "aqi": 68
+        },
+        {
+          "date": "2025-11-24",
+          "value": 0.054,
+          "aqi": 64
+        },
+        {
+          "date": "2025-11-25",
+          "value": 0.048,
+          "aqi": 58
+        },
+        {
+          "date": "2025-11-26",
+          "value": 0.051,
+          "aqi": 61
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Errores:**
+- `404`: Estación no encontrada
+
+**Ejemplo:**
+```bash
+# Obtener datos de los últimos 7 días (hasta hoy)
+curl "http://localhost:8000/api/v1/air-quality/historical/7-days?station_id=1"
+
+# Obtener datos de 7 días específicos
+curl "http://localhost:8000/api/v1/air-quality/historical/7-days?station_id=1&end_date=2025-11-27"
+```
+
+**Casos de Uso:**
+- 📊 Mostrar gráfico comparativo de múltiples contaminantes
+- 📈 Análisis de tendencias semanales
+- 🔍 Identificar patrones en la calidad del aire
+- 📱 Vista de histórico en dashboard móvil
+
+**Notas:**
+- Los datos se basan en promedios diarios calculados
+- El rango siempre es de exactamente 7 días
+- Si `end_date` no se especifica, se usa la fecha actual
+- Los contaminantes sin datos no se incluyen en la respuesta
+
+---
+
 ## 4. Recommendations
 
 ### 4.1 Get Current Recommendation (Recomendación Actual)

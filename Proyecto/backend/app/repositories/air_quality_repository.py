@@ -157,3 +157,45 @@ class AirQualityRepository:
         max_aqi = max((r.aqi for r in readings if r.aqi is not None), default=None)
         return max_aqi
 
+    def get_historical_data_by_station(self, station_id: int, start_date: date, end_date: date) -> dict:
+        """
+        Get historical daily average data for all pollutants in a station for a date range.
+
+        Args:
+            station_id: Station ID
+            start_date: Start date for the range
+            end_date: End date for the range
+
+        Returns:
+            Dictionary with pollutant data organized by pollutant_id
+        """
+        # Query daily stats for the station in the date range
+        stats = (
+            self.db.query(AirQualityDailyStats)
+            .filter(
+                AirQualityDailyStats.station_id == station_id,
+                AirQualityDailyStats.date >= start_date,
+                AirQualityDailyStats.date <= end_date
+            )
+            .options(joinedload(AirQualityDailyStats.pollutant))
+            .order_by(AirQualityDailyStats.date)
+            .all()
+        )
+
+        # Organize data by pollutant
+        pollutants_data = {}
+        for stat in stats:
+            if stat.pollutant_id not in pollutants_data:
+                pollutants_data[stat.pollutant_id] = {
+                    'pollutant': stat.pollutant,
+                    'data_points': []
+                }
+
+            pollutants_data[stat.pollutant_id]['data_points'].append({
+                'date': stat.date.isoformat(),
+                'value': stat.avg_value,
+                'aqi': stat.avg_aqi
+            })
+
+        return pollutants_data
+
