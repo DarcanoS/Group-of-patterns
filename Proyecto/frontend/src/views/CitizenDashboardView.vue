@@ -73,7 +73,7 @@
         </div>
       </div>
 
-      <!-- HISTORICAL CHART (FULL WIDTH) -->
+      <!-- HISTORICAL CHARTS (FULL WIDTH) -->
       <div class="card chart-card">
         <div class="chart-header">
           <h2>Histórico de 7 días</h2>
@@ -99,7 +99,19 @@
         <div v-if="loadingHistory" class="loading-chart">Cargando datos históricos...</div>
         <div v-else-if="historicalError" class="error-chart">{{ historicalError }}</div>
         <div v-else-if="!selectedStationId" class="no-selection">Selecciona una estación para ver el histórico</div>
-        <canvas v-else ref="chartCanvas"></canvas>
+        <div v-show="selectedStationId && !loadingHistory && !historicalError" class="charts-grid">
+          <div 
+            v-for="(pollutantData, index) in pollutantsChartData" 
+            :key="pollutantData.pollutant.id"
+            class="mini-chart-container"
+          >
+            <h3 class="pollutant-chart-title">
+              {{ pollutantData.pollutant.name }}
+              <span class="pollutant-unit">({{ pollutantData.pollutant.unit }})</span>
+            </h3>
+            <canvas :ref="el => setPollutantChartRef(el, index)"></canvas>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -114,8 +126,6 @@ import { getAirQuality, getStations, getHistoricalData } from "../services/api";
 const loading = ref(true);
 const error = ref(null);
 const data = ref(null);
-const chartCanvas = ref(null);
-const chartInstance = ref(null);
 
 // Variables para el histórico
 const availableStations = ref([]);
@@ -123,6 +133,16 @@ const selectedStationId = ref("");
 const historicalData = ref(null);
 const loadingHistory = ref(false);
 const historicalError = ref(null);
+const pollutantsChartData = ref([]);
+const pollutantChartRefs = ref([]);
+const pollutantChartInstances = ref([]);
+
+// Función para asignar refs de los canvas de contaminantes
+const setPollutantChartRef = (el, index) => {
+  if (el) {
+    pollutantChartRefs.value[index] = el;
+  }
+};
 
 onMounted(async () => {
   try {
@@ -198,157 +218,144 @@ const loadHistoricalData = async () => {
   historicalError.value = null;
   
   try {
+    console.log('🔍 Loading historical data for station:', selectedStationId.value);
     historicalData.value = await getHistoricalData(selectedStationId.value);
+    console.log('📊 Historical data received:', historicalData.value);
+    
+    pollutantsChartData.value = historicalData.value?.pollutants_data || [];
+    console.log('📈 Pollutants chart data:', pollutantsChartData.value);
+    
     await nextTick();
-    renderChart();
+    renderCharts();
   } catch (err) {
     historicalError.value = "No se pudieron cargar los datos históricos.";
-    console.error("Error loading historical data:", err);
+    console.error("❌ Error loading historical data:", err);
   } finally {
     loadingHistory.value = false;
   }
 };
 
-// Función para renderizar el gráfico
-const renderChart = () => {
-  if (!chartCanvas.value || !historicalData.value) return;
+// Función para renderizar los gráficos individuales
+const renderCharts = () => {
+  console.log('🎨 Rendering individual pollutant charts...');
   
-  // Destruir gráfico anterior si existe
-  if (chartInstance.value) {
-    chartInstance.value.destroy();
-  }
-  
-  const pollutantsData = historicalData.value.pollutants_data || [];
-  
-  if (pollutantsData.length === 0) {
+  if (pollutantsChartData.value.length === 0) {
+    console.log('⚠️ No pollutants data available');
     historicalError.value = "No hay datos disponibles para esta estación en los últimos 7 días.";
     return;
   }
   
-  // Preparar datasets para cada contaminante
-  const datasets = pollutantsData.map((pollutant, index) => {
-    const colors = [
-      '#2ecc71', // Verde
-      '#3498db', // Azul
-      '#e67e22', // Naranja
-      '#9b59b6', // Púrpura
-      '#f1c40f', // Amarillo
-      '#e74c3c'  // Rojo
-    ];
-    
-    return {
-      label: pollutant.pollutant_name,
-      data: pollutant.daily_data.map(d => d.avg_aqi),
-      borderColor: colors[index % colors.length],
-      backgroundColor: colors[index % colors.length] + '20',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 4,
-      pointHoverRadius: 6
-    };
+  // Destruir gráficos anteriores si existen
+  pollutantChartInstances.value.forEach(chart => {
+    if (chart) chart.destroy();
   });
+  pollutantChartInstances.value = [];
   
-  // Obtener fechas para las etiquetas
-  const labels = pollutantsData[0]?.daily_data.map(d => {
-    const date = new Date(d.date);
-    return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
-  }) || [];
+  // Colores para cada contaminante
+  const pollutantColors = {
+    'PM2.5': '#e74c3c',
+    'PM10': '#e67e22',
+    'O3': '#3498db',
+    'NO2': '#9b59b6',
+    'SO2': '#f1c40f',
+    'CO': '#2ecc71'
+  };
   
-  chartInstance.value = new Chart(chartCanvas.value, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: datasets
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      aspectRatio: 2,
-      plugins: {
-        legend: {
-          display: true,
-          position: 'top',
-          labels: {
-            color: '#f1f5f9',
-            font: {
-              size: 12
-            },
-            padding: 15,
-            usePointStyle: true,
-            boxWidth: 6,
-            boxHeight: 6
-          }
-        },
-        tooltip: {
-          mode: 'index',
-          intersect: false,
-          backgroundColor: 'rgba(30, 41, 59, 0.95)',
-          titleColor: '#f1f5f9',
-          bodyColor: '#cbd5e1',
-          borderColor: 'rgba(148, 163, 184, 0.3)',
-          borderWidth: 1,
-          padding: 12,
-          displayColors: true,
-          callbacks: {
-            label: function(context) {
-              let label = context.dataset.label || '';
-              if (label) {
-                label += ': ';
-              }
-              if (context.parsed.y !== null) {
-                label += 'AQI ' + Math.round(context.parsed.y);
-              }
-              return label;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: {
-            color: 'rgba(148, 163, 184, 0.1)',
-            drawBorder: false
-          },
-          ticks: {
-            color: '#94a3b8',
-            font: {
-              size: 11
-            }
-          }
-        },
-        y: {
-          beginAtZero: true,
-          grid: {
-            color: 'rgba(148, 163, 184, 0.1)',
-            drawBorder: false
-          },
-          ticks: {
-            color: '#94a3b8',
-            font: {
-              size: 11
-            },
-            callback: function(value) {
-              return 'AQI ' + value;
-            }
-          },
-          title: {
-            display: true,
-            text: 'Air Quality Index (AQI)',
-            color: '#cbd5e1',
-            font: {
-              size: 12,
-              weight: 'bold'
-            }
-          }
-        }
-      },
-      interaction: {
-        mode: 'nearest',
-        axis: 'x',
-        intersect: false
-      }
+  // Crear un gráfico para cada contaminante
+  pollutantsChartData.value.forEach((pollutantData, index) => {
+    const canvas = pollutantChartRefs.value[index];
+    if (!canvas) {
+      console.log(`⚠️ Canvas not found for ${pollutantData.pollutant.name}`);
+      return;
     }
+    
+    // Preparar datos
+    const labels = pollutantData.data_points.map(d => {
+      const date = new Date(d.date);
+      return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+    });
+    
+    const values = pollutantData.data_points.map(d => d.value);
+    
+    const color = pollutantColors[pollutantData.pollutant.name] || '#94a3b8';
+    
+    console.log(`📊 Creating chart for ${pollutantData.pollutant.name}:`, { labels, values });
+    
+    // Crear gráfico
+    const chartInstance = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: pollutantData.pollutant.unit,
+          data: values,
+          borderColor: color,
+          backgroundColor: color + '20',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: color,
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+            titleColor: '#f1f5f9',
+            bodyColor: '#cbd5e1',
+            borderColor: 'rgba(148, 163, 184, 0.3)',
+            borderWidth: 1,
+            padding: 10,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return `${context.parsed.y} ${pollutantData.pollutant.unit}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)',
+              drawBorder: false
+            },
+            ticks: {
+              color: '#94a3b8',
+              font: {
+                size: 10
+              }
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)',
+              drawBorder: false
+            },
+            ticks: {
+              color: '#94a3b8',
+              font: {
+                size: 10
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    pollutantChartInstances.value.push(chartInstance);
   });
+  
+  console.log(`✅ Created ${pollutantChartInstances.value.length} charts`);
 };
 </script>
 
@@ -473,10 +480,42 @@ const renderChart = () => {
   overflow: hidden;
 }
 
-.chart-card canvas {
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.mini-chart-container {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pollutant-chart-title {
+  margin: 0 0 0.75rem 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
+  color: #f1f5f9;
+  text-align: center;
+}
+
+.pollutant-unit {
+  font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+  font-weight: 400;
+  color: #94a3b8;
+  margin-left: 0.25rem;
+}
+
+.mini-chart-container canvas {
+  flex: 1;
   max-width: 100%;
-  height: 350px !important;
-  width: 100% !important;
+  max-height: 100%;
 }
 
 .chart-header {
@@ -779,8 +818,12 @@ const renderChart = () => {
     min-width: unset;
   }
 
-  .chart-card canvas {
-    height: 300px !important;
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mini-chart-container {
+    height: 220px;
   }
 
   .pollutants-grid {
@@ -810,8 +853,8 @@ const renderChart = () => {
     padding: 1rem;
   }
 
-  .chart-card canvas {
-    height: 250px !important;
+  .mini-chart-container {
+    height: 200px;
   }
 
   .pollutants-grid {
