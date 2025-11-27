@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     """
 
     # API Configuration
-    API_V1_STR: str = "/api"
+    API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Air Quality Platform API"
     VERSION: str = "1.0.0"
 
