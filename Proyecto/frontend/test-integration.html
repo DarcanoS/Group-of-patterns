@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Integración Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Integración - Backend Air Quality</h1>
+    <p>Este script prueba la conectividad con el backend en <strong>http://localhost:8000/api/v1</strong></p>
+
+    <!-- Test 1: Health Check -->
+    <div class="test-section">
+        <h2>1. Health Check</h2>
+        <button onclick="testHealthCheck()">Probar Health Check</button>
+        <div id="health-result" class="result"></div>
+    </div>
+
+    <!-- Test 2: Login -->
+    <div class="test-section">
+        <h2>2. Login</h2>
+        <input type="email" id="login-email" placeholder="Email" value="user@example.com">
+        <input type="password" id="login-password" placeholder="Password" value="password123">
+        <button onclick="testLogin()">Probar Login</button>
+        <div id="login-result" class="result"></div>
+    </div>
+
+    <!-- Test 3: Estaciones -->
+    <div class="test-section">
+        <h2>3. Listar Estaciones</h2>
+        <input type="text" id="stations-city" placeholder="Ciudad (opcional)" value="Bogotá">
+        <button onclick="testStations()">Listar Estaciones</button>
+        <div id="stations-result" class="result"></div>
+    </div>
+
+    <!-- Test 4: Calidad del Aire -->
+    <div class="test-section">
+        <h2>4. Calidad del Aire Actual</h2>
+        <input type="text" id="aqi-city" placeholder="Ciudad" value="Bogotá">
+        <button onclick="testCurrentAQI()">Obtener AQI</button>
+        <div id="aqi-result" class="result"></div>
+    </div>
+
+    <!-- Test 5: Dashboard -->
+    <div class="test-section">
+        <h2>5. Dashboard Data</h2>
+        <input type="text" id="dashboard-city" placeholder="Ciudad" value="Bogotá">
+        <button onclick="testDashboard()">Obtener Dashboard</button>
+        <div id="dashboard-result" class="result"></div>
+    </div>
+
+    <!-- Test 6: Recomendaciones (Requiere Auth) -->
+    <div class="test-section">
+        <h2>6. Recomendaciones (Requiere Login)</h2>
+        <input type="text" id="rec-location" placeholder="Ubicación" value="Bogotá">
+        <button onclick="testRecommendation()">Obtener Recomendación</button>
+        <div id="rec-result" class="result"></div>
+    </div>
+
+    <!-- Test 7: Estadísticas Diarias -->
+    <div class="test-section">
+        <h2>7. Estadísticas Diarias</h2>
+        <input type="date" id="stats-start" placeholder="Fecha inicio">
+        <input type="date" id="stats-end" placeholder="Fecha fin">
+        <button onclick="testDailyStats()">Obtener Estadísticas</button>
+        <div id="stats-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/v1';
+        let authToken = null;
+
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            const className = isError ? 'error' : 'success';
+            element.innerHTML = `<span class="${className}">${isError ? '❌ Error:' : '✅ Success:'}</span>\n${JSON.stringify(data, null, 2)}`;
+        }
+
+        async function testHealthCheck() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/health`);
+                const data = await response.json();
+                showResult('health-result', data, !response.ok);
+            } catch (error) {
+                showResult('health-result', { error: error.message }, true);
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                const formData = new URLSearchParams();
+                formData.append('username', email);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    authToken = data.access_token;
+                    showResult('login-result', { ...data, note: '✅ Token guardado para siguientes pruebas' });
+                } else {
+                    showResult('login-result', data, true);
+                }
+            } catch (error) {
+                showResult('login-result', { error: error.message }, true);
+            }
+        }
+
+        async function testStations() {
+            try {
+                const city = document.getElementById('stations-city').value;
+                let url = `${API_BASE}/stations?limit=10`;
+                if (city) url += `&city=${encodeURIComponent(city)}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+                showResult('stations-result', data, !response.ok);
+            } catch (error) {
+                showResult('stations-result', { error: error.message }, true);
+            }
+        }
+
+        async function testCurrentAQI() {
+            try {
+                const city = document.getElementById('aqi-city').value;
+                const response = await fetch(`${API_BASE}/air-quality/current?city=${encodeURIComponent(city)}`);
+                const data = await response.json();
+                showResult('aqi-result', data, !response.ok);
+            } catch (error) {
+                showResult('aqi-result', { error: error.message }, true);
+            }
+        }
+
+        async function testDashboard() {
+            try {
+                const city = document.getElementById('dashboard-city').value;
+                const response = await fetch(`${API_BASE}/air-quality/dashboard?city=${encodeURIComponent(city)}`);
+                const data = await response.json();
+                showResult('dashboard-result', data, !response.ok);
+            } catch (error) {
+                showResult('dashboard-result', { error: error.message }, true);
+            }
+        }
+
+        async function testRecommendation() {
+            if (!authToken) {
+                showResult('rec-result', { error: 'Por favor haz login primero' }, true);
+                return;
+            }
+
+            try {
+                const location = document.getElementById('rec-location').value;
+                const response = await fetch(`${API_BASE}/recommendations/current?location=${encodeURIComponent(location)}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                showResult('rec-result', data, !response.ok);
+            } catch (error) {
+                showResult('rec-result', { error: error.message }, true);
+            }
+        }
+
+        async function testDailyStats() {
+            try {
+                const startDate = document.getElementById('stats-start').value;
+                const endDate = document.getElementById('stats-end').value;
+
+                let url = `${API_BASE}/air-quality/daily-stats?limit=30`;
+                if (startDate) url += `&start_date=${startDate}`;
+                if (endDate) url += `&end_date=${endDate}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+                showResult('stats-result', data, !response.ok);
+            } catch (error) {
+                showResult('stats-result', { error: error.message }, true);
+            }
+        }
+
+        // Configurar fechas por defecto
+        const today = new Date();
+        const twoWeeksAgo = new Date(today);
+        twoWeeksAgo.setDate(today.getDate() - 14);
+
+        document.getElementById('stats-start').value = twoWeeksAgo.toISOString().split('T')[0];
+        document.getElementById('stats-end').value = today.toISOString().split('T')[0];
+    </script>
+</body>
+</html>
+
