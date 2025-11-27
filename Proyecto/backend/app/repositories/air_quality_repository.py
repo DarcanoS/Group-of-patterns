@@ -161,6 +161,8 @@ class AirQualityRepository:
         """
         Get historical daily average data for all pollutants in a station for a date range.
 
+        This method calculates daily averages from air_quality_reading table in real-time.
+
         Args:
             station_id: Station ID
             start_date: Start date for the range
@@ -169,32 +171,55 @@ class AirQualityRepository:
         Returns:
             Dictionary with pollutant data organized by pollutant_id
         """
-        # Query daily stats for the station in the date range
-        stats = (
-            self.db.query(AirQualityDailyStats)
-            .filter(
-                AirQualityDailyStats.station_id == station_id,
-                AirQualityDailyStats.date >= start_date,
-                AirQualityDailyStats.date <= end_date
+        from datetime import datetime, timedelta
+        
+        # Convert dates to datetime for comparison
+        start_datetime = datetime.combine(start_date, datetime.min.time())
+        end_datetime = datetime.combine(end_date, datetime.max.time())
+        
+        # Query readings and calculate daily averages grouped by date and pollutant
+        # Using func.date() to extract date from datetime column
+        results = (
+            self.db.query(
+                func.date(AirQualityReading.datetime).label('date'),
+                AirQualityReading.pollutant_id,
+                Pollutant,
+                func.avg(AirQualityReading.value).label('avg_value'),
+                func.avg(AirQualityReading.aqi).label('avg_aqi')
             )
-            .options(joinedload(AirQualityDailyStats.pollutant))
-            .order_by(AirQualityDailyStats.date)
+            .join(Pollutant, AirQualityReading.pollutant_id == Pollutant.id)
+            .filter(
+                AirQualityReading.station_id == station_id,
+                AirQualityReading.datetime >= start_datetime,
+                AirQualityReading.datetime <= end_datetime
+            )
+            .group_by(
+                func.date(AirQualityReading.datetime),
+                AirQualityReading.pollutant_id,
+                Pollutant.id,
+                Pollutant.name,
+                Pollutant.unit,
+                Pollutant.description
+            )
+            .order_by(func.date(AirQualityReading.datetime))
             .all()
         )
 
         # Organize data by pollutant
         pollutants_data = {}
-        for stat in stats:
-            if stat.pollutant_id not in pollutants_data:
-                pollutants_data[stat.pollutant_id] = {
-                    'pollutant': stat.pollutant,
+        for result in results:
+            date_value, pollutant_id, pollutant, avg_value, avg_aqi = result
+            
+            if pollutant_id not in pollutants_data:
+                pollutants_data[pollutant_id] = {
+                    'pollutant': pollutant,
                     'data_points': []
                 }
 
-            pollutants_data[stat.pollutant_id]['data_points'].append({
-                'date': stat.date.isoformat(),
-                'value': stat.avg_value,
-                'aqi': stat.avg_aqi
+            pollutants_data[pollutant_id]['data_points'].append({
+                'date': date_value.isoformat(),
+                'value': round(avg_value, 2) if avg_value else None,
+                'aqi': round(avg_aqi) if avg_aqi else None
             })
 
         return pollutants_data
