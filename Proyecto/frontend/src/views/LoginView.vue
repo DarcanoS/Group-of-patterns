@@ -43,11 +43,11 @@ const handleLogin = async () => {
     const roleName = response.user.role.name.toLowerCase();
 
     if (roleName === 'citizen') {
-      router.push('/citizen-dashboard');
+      router.push('/dashboard/citizen');
     } else if (roleName === 'researcher') {
-      router.push('/researcher-dashboard');
+      router.push('/dashboard/researcher');
     } else if (roleName === 'admin') {
-      router.push('/admin-dashboard');
+      router.push('/dashboard/admin');
     } else {
       router.push('/');
     }
