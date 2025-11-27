@@ -31,13 +31,13 @@ echo -e "${GREEN}Environment variables loaded from .env${NC}"
 # Function to connect as admin
 connect_admin() {
     echo -e "${GREEN}Connecting as admin user...${NC}"
-    podman exec -it "$CONTAINER_NAME" psql -U "$DB_ADMIN_USER" -d "$DB_NAME"
+    podman exec -it "$POSTGRES_CONTAINER_NAME" psql -U "$DB_ADMIN_USER" -d "$DB_NAME"
 }
 
 # Function to connect as app user
 connect_app() {
     echo -e "${GREEN}Connecting as application user...${NC}"
-    podman exec -it "$CONTAINER_NAME" psql -U "$DB_APP_USER" -d "$DB_NAME"
+    podman exec -it "$POSTGRES_CONTAINER_NAME" psql -U "$DB_APP_USER" -d "$DB_NAME"
 }
 
 # Function to run a SQL script as admin
@@ -54,7 +54,7 @@ run_script_admin() {
     fi
     
     echo -e "${GREEN}Running $1 as admin user...${NC}"
-    podman exec -i "$CONTAINER_NAME" psql -U "$DB_ADMIN_USER" -d "$DB_NAME" < "$1"
+    podman exec -i "$POSTGRES_CONTAINER_NAME" psql -U "$DB_ADMIN_USER" -d "$DB_NAME" < "$1"
 }
 
 # Function to run a SQL script as app user
@@ -71,14 +71,14 @@ run_script_app() {
     fi
     
     echo -e "${GREEN}Running $1 as application user...${NC}"
-    podman exec -i "$CONTAINER_NAME" psql -U "$DB_APP_USER" -d "$DB_NAME" < "$1"
+    podman exec -i "$POSTGRES_CONTAINER_NAME" psql -U "$DB_APP_USER" -d "$DB_NAME" < "$1"
 }
 
 # Function to show connection info
 show_info() {
     echo -e "${GREEN}=== Database Connection Information ===${NC}"
     echo ""
-    echo "Container: $CONTAINER_NAME"
+    echo "Container: $POSTGRES_CONTAINER_NAME"
     echo "Database: $DB_NAME"
     echo "Host: $DB_HOST"
     echo "Port: $DB_PORT"
