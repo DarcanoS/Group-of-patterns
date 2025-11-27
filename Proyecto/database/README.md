@@ -122,6 +122,7 @@ docs/               # Documentation (only essentials)
 > Only keep files strictly needed for DB structure, initialization, and container setup. Remove ingestion summaries and temporary files from repo.
 > **🐳 Using Containers?** See [CONTAINERS.md](CONTAINERS.md) for Podman/Docker setup (recommended for development and production).
 
+```bash
 cd Proyecto/database/
 cp .env.example .env
 
