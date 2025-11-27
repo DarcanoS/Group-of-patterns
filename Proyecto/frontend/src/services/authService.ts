@@ -30,6 +30,23 @@ interface User {
   is_active: boolean;
 }
 
+interface RegisterData {
+  email: string;
+  password: string;
+  full_name: string;
+  role_id?: number;
+}
+
+export async function register(data: RegisterData): Promise<User> {
+  const response = await httpClient.post<User>(
+    '/auth/register',
+    data,
+    false // No incluir auth en registro
+  );
+
+  return response;
+}
+
 export async function login(email: string, password: string): Promise<LoginResponse> {
   // El backend espera form-data con username (email) y password
   const formData = new URLSearchParams();

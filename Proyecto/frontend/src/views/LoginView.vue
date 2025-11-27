@@ -1,13 +1,17 @@
 <template>
   <section class="auth-container">
-    <h2>registro</h2>
+    <h2>Iniciar Sesión</h2>
 
-    <form @submit.prevent="login">
+    <form @submit.prevent="handleLogin">
       <input v-model="email" type="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Password" required />
 
-      <button type="submit">Login</button>
-      <p class="link" @click="goRegister">Sin cuenta? Registrar</p>
+      <button type="submit" :disabled="loading">
+        {{ loading ? 'Iniciando sesión...' : 'Login' }}
+      </button>
+
+      <p v-if="error" class="error">{{ error }}</p>
+      <p class="link" @click="goRegister">¿Sin cuenta? Registrar</p>
     </form>
   </section>
 </template>
@@ -15,14 +19,45 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { login } from "@/services/authService";
 
 const router = useRouter();
 const email = ref("");
 const password = ref("");
+const loading = ref(false);
+const error = ref("");
 
-const login = () => {
-  console.log("Login:", email.value, password.value);
-  router.push("/dashboard"); // Simulado
+const handleLogin = async () => {
+  loading.value = true;
+  error.value = "";
+
+  try {
+    console.log("🔄 Intentando login con:", email.value);
+    const response = await login(email.value, password.value);
+
+    console.log("✅ Login exitoso:", response);
+    console.log("👤 Usuario:", response.user);
+    console.log("🎭 Rol:", response.user.role.name);
+
+    // Redireccionar según el rol del usuario
+    const roleName = response.user.role.name.toLowerCase();
+
+    if (roleName === 'citizen') {
+      router.push('/citizen-dashboard');
+    } else if (roleName === 'researcher') {
+      router.push('/researcher-dashboard');
+    } else if (roleName === 'admin') {
+      router.push('/admin-dashboard');
+    } else {
+      router.push('/');
+    }
+
+  } catch (err: any) {
+    console.error("❌ Error en login:", err);
+    error.value = err.message || "Error al iniciar sesión. Verifica tus credenciales.";
+  } finally {
+    loading.value = false;
+  }
 };
 
 const goRegister = () => {
@@ -39,6 +74,10 @@ const goRegister = () => {
   border-radius: 12px;
   text-align: center;
   color: white;
+}
+
+h2 {
+  margin-bottom: 20px;
 }
 
 input {
@@ -58,11 +97,35 @@ button {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover:not(:disabled) {
+  background: #0284c7;
+}
+
+button:disabled {
+  background: #64748b;
+  cursor: not-allowed;
+}
+
+.error {
+  margin-top: 15px;
+  padding: 10px;
+  background: #ef4444;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
 }
 
 .link {
   margin-top: 10px;
   color: #38bdf8;
   cursor: pointer;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: #7dd3fc;
 }
 </style>

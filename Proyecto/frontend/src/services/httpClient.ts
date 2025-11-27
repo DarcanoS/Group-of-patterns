@@ -52,7 +52,8 @@ class HttpClient {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `HTTP Error: ${response.status}`);
     }
 
     return response.json();
@@ -86,5 +87,6 @@ class HttpClient {
   }
 }
 
-export const httpClient = new HttpClient(API_BASE_URL);
+const httpClient = new HttpClient(API_BASE_URL);
 export default httpClient;
+
