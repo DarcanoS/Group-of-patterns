@@ -25,9 +25,15 @@ export async function getAirQuality(city = 'Bogotá') {
 
     return {
       city: currentAQI.city,
-      level: currentAQI.risk_category?.level || 'Unknown',
+      level: currentAQI.category || 'Unknown',
       aqi: currentAQI.aqi,
-      status: currentAQI.risk_category?.level || 'Unknown',
+      primaryPollutant: currentAQI.dominant_pollutant,
+      riskCategory: {
+        level: currentAQI.category || 'Unknown',
+        color: currentAQI.color,
+        health_implications: currentAQI.health_message || 'No data available',
+        cautionary_statement: getCautionaryStatement(currentAQI.aqi)
+      },
       updatedAt: new Date(currentAQI.timestamp).toLocaleString(),
       history: [currentAQI.aqi], // Simplificado, se puede expandir con datos históricos
       stations: stationsData,
@@ -36,6 +42,23 @@ export async function getAirQuality(city = 'Bogotá') {
   } catch (error) {
     console.error('Error fetching air quality:', error);
     throw error;
+  }
+}
+
+// Función auxiliar para generar mensajes de precaución según el AQI
+function getCautionaryStatement(aqi) {
+  if (aqi <= 50) {
+    return 'Air quality is good. Enjoy your outdoor activities!';
+  } else if (aqi <= 100) {
+    return 'Unusually sensitive people should consider reducing prolonged or heavy outdoor exertion.';
+  } else if (aqi <= 150) {
+    return 'People with respiratory disease should limit prolonged outdoor exertion.';
+  } else if (aqi <= 200) {
+    return 'Everyone should avoid prolonged outdoor exertion. People with respiratory disease should avoid all outdoor exertion.';
+  } else if (aqi <= 300) {
+    return 'Everyone should avoid all outdoor exertion.';
+  } else {
+    return 'Everyone should remain indoors and keep activity levels low.';
   }
 }
 

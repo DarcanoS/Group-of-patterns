@@ -10,17 +10,21 @@
 
       <!-- AQI CARD -->
       <div class="card aqi-card">
-        <h2>Air Quality </h2>
+        <h2>Air Quality Index</h2>
         <p class="aqi" :class="aqiColor">{{ data.aqi }}</p>
         <span class="level">{{ data.level }}</span>
+        <p v-if="data.primaryPollutant" class="pollutant">
+          Contaminante principal: <strong>{{ data.primaryPollutant }}</strong>
+        </p>
         <small>ultima actualizacion: {{ data.updatedAt }}</small>
       </div>
 
       <!-- STATUS CARD -->
       <div class="card">
-        <h2>Status</h2>
-        <p>{{ data.status }}</p>
-        <p class="recommendation">{{ recommendation }}</p>
+        <h2>Estado de Salud</h2>
+        <p class="status-level" :class="aqiColor">{{ data.riskCategory.level }}</p>
+        <p class="health-implications">{{ data.riskCategory.health_implications }}</p>
+        <p class="cautionary-statement">{{ data.riskCategory.cautionary_statement }}</p>
       </div>
 
       <!-- NEARBY STATIONS -->
@@ -93,15 +97,6 @@ const aqiColor = computed(() => {
   if (data.value.aqi <= 150) return "unhealthy";
   return "danger";
 });
-
-const recommendation = computed(() => {
-  if (!data.value) return "";
-  const aqi = data.value.aqi;
-  if (aqi <= 50) return "Air quality is excellent. Ideal for outdoor activities.";
-  if (aqi <= 100) return "Moderate air quality. Sensitive people should limit prolonged exertion.";
-  if (aqi <= 150) return "Unhealthy for sensitive groups. Reduce outdoor activity.";
-  return "Hazardous air quality. Stay indoors.";
-});
 </script>
 
 <style scoped>
@@ -153,14 +148,30 @@ const recommendation = computed(() => {
   opacity: 0.8;
 }
 
-.recommendation {
+.pollutant {
   margin-top: 1rem;
-  font-style: italic;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
-.product-desc {
-  font-size: 0.9rem;
-  opacity: 0.7;
+.status-level {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.health-implications {
+  margin: 0.8rem 0;
+  font-weight: 500;
+}
+
+.cautionary-statement {
+  margin-top: 1rem;
+  font-style: italic;
+  opacity: 0.85;
+  padding: 0.8rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
 }
 
 .chart-card {
