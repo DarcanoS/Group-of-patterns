@@ -3,6 +3,7 @@
     <LandingHeroSection />
     <LandingRolesSection />
     <LandingHowItWorksSection />
+    <LandingApiSection />
     <LandingInsightsSection />
   </main>
 </template>
@@ -11,6 +12,7 @@
 import LandingHeroSection from '../components/sections/LandingHeroSection.vue'
 import LandingRolesSection from '../components/sections/LandingRolesSection.vue'
 import LandingHowItWorksSection from '../components/sections/LandingHowItWorksSection.vue'
+import LandingApiSection from '../components/sections/LandingApiSection.vue'
 import LandingInsightsSection from '../components/sections/LandingInsightsSection.vue'
 </script>
 
@@ -18,6 +20,5 @@ import LandingInsightsSection from '../components/sections/LandingInsightsSectio
 .landing {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
 }
 </style>

@@ -38,13 +38,25 @@ interface RegisterData {
 }
 
 export async function register(data: RegisterData): Promise<User> {
-  const response = await httpClient.post<User>(
-    '/auth/register',
-    data,
-    false // No incluir auth en registro
-  );
-
-  return response;
+  // Mock implementation - solo para mostrar la pantalla
+  console.log('📝 Mock register called with:', data);
+  
+  // Simular delay de red
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  // Retornar usuario mock
+  return {
+    id: 999,
+    email: data.email,
+    full_name: data.full_name,
+    role: {
+      id: data.role_id || 1,
+      name: data.role_id === 1 ? 'Citizen' : data.role_id === 2 ? 'Researcher' : 'Admin',
+      description: 'Mock role'
+    },
+    created_at: new Date().toISOString(),
+    is_active: true
+  };
 }
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
