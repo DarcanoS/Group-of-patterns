@@ -8,16 +8,28 @@ export async function getAirQuality(city = 'Bogotá') {
     // Obtener estaciones de la ciudad
     const stations = await httpClient.get(`/stations?city=${encodeURIComponent(city)}&limit=10`, false);
 
-    // Obtener lecturas de cada estación para el historial
+    // Obtener lecturas de cada estación con información completa
     const stationPromises = stations.slice(0, 3).map(async (station) => {
       try {
-        const readings = await httpClient.get(`/stations/${station.id}/readings/current`, false);
+        const data = await httpClient.get(`/stations/${station.id}/readings/current`, false);
         return {
-          name: station.name,
-          aqi: readings.readings?.[0]?.aqi || 0
+          id: station.id,
+          name: data.station.name,
+          city: data.station.city,
+          country: data.station.country,
+          latitude: data.station.latitude,
+          longitude: data.station.longitude,
+          readings: data.readings || [],
+          maxAqi: Math.max(...data.readings.map(r => r.aqi || 0).filter(aqi => aqi > 0), 0)
         };
       } catch {
-        return { name: station.name, aqi: 0 };
+        return { 
+          id: station.id,
+          name: station.name, 
+          city: station.city,
+          readings: [],
+          maxAqi: 0 
+        };
       }
     });
 

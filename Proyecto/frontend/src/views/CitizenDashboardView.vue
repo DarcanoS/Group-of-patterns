@@ -6,45 +6,82 @@
     <div v-if="loading" class="loading">cargando datos...</div>
     <div v-if="error" class="error">{{ error }}</div>
 
-    <div v-if="data" class="grid">
+    <div v-if="data" class="dashboard-layout">
+      
+      <!-- TOP ROW: AQI + STATUS + PRODUCTS -->
+      <div class="top-row">
+        <!-- AQI CARD -->
+        <div class="card aqi-card">
+          <h2>Air Quality </h2>
+          <p class="aqi" :class="aqiColor">{{ data.aqi }}</p>
+          <span class="level">{{ data.level }}</span>
+          <small>ultima actualizacion: {{ data.updatedAt }}</small>
+        </div>
 
-      <!-- AQI CARD -->
-      <div class="card aqi-card">
-        <h2>Air Quality </h2>
-        <p class="aqi" :class="aqiColor">{{ data.aqi }}</p>
-        <span class="level">{{ data.level }}</span>
-        <small>ultima actualizacion: {{ data.updatedAt }}</small>
+        <!-- STATUS CARD -->
+        <div class="card">
+          <h2>Status</h2>
+          <p>{{ data.status }}</p>
+          <p class="recommendation">{{ recommendation }}</p>
+        </div>
+
+        <!-- PRODUCT SUGGESTIONS -->
+        <div class="card">
+          <h2>Sugerencias </h2>
+          <ul>
+            <li v-for="product in data.products" :key="product.name">
+              <strong>{{ product.name }}</strong>
+              <p class="product-desc">{{ product.description }}</p>
+            </li>
+          </ul>
+        </div>
       </div>
 
-      <!-- STATUS CARD -->
-      <div class="card">
-        <h2>Status</h2>
-        <p>{{ data.status }}</p>
-        <p class="recommendation">{{ recommendation }}</p>
+      <!-- NEARBY STATIONS (FULL WIDTH) -->
+      <!-- NEARBY STATIONS (FULL WIDTH) -->
+      <div class="card stations-card">
+        <h2>Nearby Stations</h2>
+        <div v-if="!data.stations || data.stations.length === 0" class="no-data">
+          No stations available
+        </div>
+        <div v-else class="stations-list">
+          <div v-for="station in data.stations" :key="station.id" class="station-item">
+            <div class="station-header">
+              <div>
+                <h3 class="station-name">{{ station.name }}</h3>
+                <p class="station-location">📍 {{ station.city }}, {{ station.country }}</p>
+                <p class="station-updated" v-if="station.readings.length > 0">
+                  🕒 {{ formatDateTime(station.readings[0].datetime) }}
+                </p>
+              </div>
+              <div class="station-aqi" :class="getStationAqiColor(station.maxAqi)">
+                {{ station.maxAqi }}
+              </div>
+            </div>
+            <div class="pollutants-grid">
+              <div 
+                v-for="reading in station.readings.slice(0, 6)" 
+                :key="reading.pollutant.name"
+                class="pollutant-badge"
+              >
+                <span class="pollutant-name">{{ reading.pollutant.name }}</span>
+                <span class="pollutant-value">
+                  {{ reading.value }} <small>{{ reading.pollutant.unit }}</small>
+                </span>
+                <span 
+                  v-if="reading.aqi !== null" 
+                  class="pollutant-aqi"
+                  :class="getPollutantAqiColor(reading.aqi)"
+                >
+                  AQI {{ reading.aqi }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- NEARBY STATIONS -->
-      <div class="card">
-        <h2>Estaciones cercanaas </h2>
-        <ul>
-          <li v-for="station in data.stations" :key="station.name">
-            {{ station.name }} — AQI {{ station.aqi }}
-          </li>
-        </ul>
-      </div>
-
-      <!-- PRODUCT SUGGESTIONS -->
-      <div class="card">
-        <h2>Sugerencias </h2>
-        <ul>
-          <li v-for="product in data.products" :key="product.name">
-            <strong>{{ product.name }}</strong>
-            <p class="product-desc">{{ product.description }}</p>
-          </li>
-        </ul>
-      </div>
-
-      <!-- HISTORICAL CHART -->
+      <!-- HISTORICAL CHART (FULL WIDTH) -->
       <div class="card chart-card">
         <h2>Historico de 7 dias </h2>
         <canvas ref="chartCanvas"></canvas>
@@ -113,6 +150,33 @@ const recommendation = computed(() => {
   if (aqi <= 150) return "Unhealthy for sensitive groups. Reduce outdoor activity.";
   return "Hazardous air quality. Stay indoors.";
 });
+
+const getStationAqiColor = (aqi) => {
+  if (aqi <= 50) return "aqi-good";
+  if (aqi <= 100) return "aqi-moderate";
+  if (aqi <= 150) return "aqi-unhealthy";
+  return "aqi-danger";
+};
+
+const getPollutantAqiColor = (aqi) => {
+  if (aqi <= 50) return "aqi-good";
+  if (aqi <= 100) return "aqi-moderate";
+  if (aqi <= 150) return "aqi-unhealthy";
+  return "aqi-danger";
+};
+
+const formatDateTime = (datetime) => {
+  if (!datetime) return "";
+  const date = new Date(datetime);
+  return date.toLocaleString('es-ES', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+};
 </script>
 
 <style scoped>
@@ -136,9 +200,15 @@ const recommendation = computed(() => {
   color: red;
 }
 
-.grid {
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.top-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
@@ -175,11 +245,166 @@ const recommendation = computed(() => {
 }
 
 .chart-card {
-  grid-column: span 2;
+  width: 100%;
 }
 
 .good { color: #2ecc71; }
 .moderate { color: #f1c40f; }
 .unhealthy { color: #e67e22; }
 .danger { color: #e74c3c; }
+
+/* Stations Card */
+.stations-card {
+  width: 100%;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  opacity: 0.6;
+}
+
+.stations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.station-item {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.station-item:hover {
+  border-color: rgba(148, 163, 184, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.station-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.station-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.station-location {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.station-updated {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+.station-aqi {
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.pollutants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.pollutant-badge {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+.pollutant-badge:hover {
+  background: rgba(30, 41, 59, 1);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.pollutant-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pollutant-value {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #f1f5f9;
+}
+
+.pollutant-value small {
+  font-size: 0.7rem;
+  font-weight: normal;
+  color: #94a3b8;
+  margin-left: 2px;
+}
+
+.pollutant-aqi {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+/* AQI Color Classes */
+.aqi-good {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.aqi-moderate {
+  background-color: rgba(241, 196, 15, 0.2);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.aqi-unhealthy {
+  background-color: rgba(230, 126, 34, 0.2);
+  color: #e67e22;
+  border: 1px solid rgba(230, 126, 34, 0.3);
+}
+
+.aqi-danger {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+@media (max-width: 768px) {
+  .top-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .pollutants-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
 </style>
