@@ -142,6 +142,16 @@ export async function getStationCurrentReadings(stationId) {
   }
 }
 
+// Obtener datos históricos de 7 días por estación
+export async function getHistoricalData(stationId) {
+  try {
+    return await httpClient.get(`/air-quality/historical/7-days?station_id=${stationId}`, false);
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+    throw error;
+  }
+}
+
 // Health check del sistema
 export async function healthCheck() {
   try {
